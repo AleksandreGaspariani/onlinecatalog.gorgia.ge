@@ -3,8 +3,6 @@
   padding: 40px 20px;
   flex-shrink: 0;
   height: 20vh; /* Around 1/5 of the viewport height */
-  width: 100vw !important;
-  position: block;
   display: flex;
   justify-content: center;
   align-items: center;

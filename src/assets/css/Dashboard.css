@@ -1,0 +1,11 @@
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  padding-left: 40px; 
+  padding-right: 0;   
+  margin-top: 40px; 
+  gap: 100px;         
+}
+

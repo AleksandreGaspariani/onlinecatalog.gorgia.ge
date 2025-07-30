@@ -1,6 +1,4 @@
 import React from 'react'
-import logo from '../assets/images/logo.png'
-import { IoIosPhonePortrait } from "react-icons/io";
 import { GoSearch } from "react-icons/go";
 import '../assets/css/HeaderModal.css'
 
@@ -14,9 +12,6 @@ const HeaderModal = () => {
 
   return (
     <div className="header-modal">
-      <div className="header-logo">
-        <img src={logo} alt="Logo" />
-      </div>
       <div className="header-search">
         <input
           type="text"
@@ -37,10 +32,6 @@ const HeaderModal = () => {
             </ul>
           </div>
         )}
-      </div>
-      <div className="header-phone">
-        <IoIosPhonePortrait style={{ height: "1.7rem", width: "1.7rem" }}/>
-        <span>032 2960 960</span>
       </div>
     </div>
   )
