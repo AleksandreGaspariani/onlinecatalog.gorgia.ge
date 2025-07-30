@@ -2,10 +2,9 @@ import React from 'react'
 import { FaArrowRight } from 'react-icons/fa'
 import '../assets/css/FooterModal.css'
 
-const FooterModal = ({ visible }) => {
-  if (!visible) return null;
+const FooterModal = () => {
   return (
-    <footer className="footer-modal">
+    <footer className="footer-modal" style={{ width: '100% !important' }}>
       <div className="footer-content">
         <h2 className="footer-title">გამოიწერე სიახლეები</h2>
         <p className="footer-subtitle">
