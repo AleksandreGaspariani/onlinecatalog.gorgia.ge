@@ -9,7 +9,7 @@ const ProductTable = () => {
 
     const handleProductSubmit = e => {
         e.preventDefault()
-        // ...submit logic...
+        console.log({ productCode })
     }
 
     const columns = [

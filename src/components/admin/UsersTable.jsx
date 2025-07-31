@@ -49,6 +49,7 @@ const Users = () => {
 
     const handleSubmit = e => {
         e.preventDefault()
+        console.log(form)
     }
 
     const fields = [
@@ -58,7 +59,6 @@ const Users = () => {
             name: 'name',
             value: form.name,
             onChange: handleChange,
-            autoFocus: true
         },
         {
             label: 'Email Address',

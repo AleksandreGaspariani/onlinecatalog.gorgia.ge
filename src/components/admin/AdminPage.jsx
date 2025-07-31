@@ -4,12 +4,14 @@ import { useSelector, useDispatch } from 'react-redux'
 import { setSelectedTab } from '../../store/adminSlice'
 import CategoryTable from './CategoryTable'
 import ProductTable from './ProductTable'
-import OrderRequest from './OrderRequest'
-import Orders from './Orders'
-import Profile from './Profile'
-import Users from './Users'
+import OrderRequest from './OrderRequestTable'
+import Orders from './OrdersTable'
+import Profile from './ProfileTable'
+import Users from './UsersTable'
+import { useNavigate } from 'react-router-dom'
 
 const sidebarItems = [
+    { label: 'მთავარი', key: 'main' },
     { label: 'კატეგორიები', key: 'categories' },
     { label: 'პროდუქტები', key: 'products' },
     { label: 'შესყიდვის მოთხოვნები', key: 'requests' },
@@ -22,6 +24,7 @@ const AdminPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const selectedTab = useSelector(state => state.admin.selectedTab)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     return (
         <div className={styles.adminContainer}>
@@ -51,7 +54,13 @@ const AdminPage = () => {
                                     background: selectedTab === item.key ? '#e0e5eb85' : undefined,
                                     fontWeight: selectedTab === item.key ? 'bold' : undefined
                                 }}
-                                onClick={() => dispatch(setSelectedTab(item.key))}
+                                onClick={() => {
+                                    if (item.key === 'main') {
+                                        navigate('/')
+                                    } else {
+                                        dispatch(setSelectedTab(item.key))
+                                    }
+                                }}
                             >
                                 <span className={styles.adminSidebarLabel}>{item.label}</span>
                                 <span className={styles.adminSidebarArrow}>{'›'}</span>
