@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Table from './Table'
 import Modal from './Modal'
+import Edit from './Edit'
 import '../../assets/css/AdminPage.module.css'
 import product from '../../assets/css/ProductPage.module.css'
 
@@ -20,21 +21,6 @@ const columns = [
 
 ]
 
-const data = [
-    {
-        id: 1,
-        name: 'მაგალითი კატეგორია',
-        iban: 'GE29NB0000000101904917',
-        contragentIbanNumber: '123456789',
-        phone: '+995599123456',
-        contragentName: 'კონტრაგენტი',
-        contragentEmail: 'contragent@example.com',
-        email: 'user@example.com',
-        password: '********',
-        actions: 'რედაქტირება | წაშლა'
-    }
-]
-
 const Users = () => {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState({
@@ -42,6 +28,19 @@ const Users = () => {
         email: '',
         password: ''
     })
+    const [editModalOpen, setEditModalOpen] = useState(false)
+    const [editForm, setEditForm] = useState({
+        name: '',
+        email: '',
+        password: ''
+    })
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        fetch('/api/users')
+            .then(res => res.json())
+            .then(setData)
+    }, [])
 
     const handleChange = e => {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -50,6 +49,30 @@ const Users = () => {
     const handleSubmit = e => {
         e.preventDefault()
         console.log(form)
+    }
+
+    const handleEdit = (user) => {
+        setEditForm({
+            name: user.name || '',
+            email: user.email || '',
+            password: user.password || ''
+        })
+        setEditModalOpen(true)
+    }
+    const handleDelete = (user) => {
+        if (window.confirm(`Delete user: ${user.name}?`)) {
+            alert('Deleted!')
+        }
+    }
+
+    const handleEditChange = e => {
+        setEditForm({ ...editForm, [e.target.name]: e.target.value })
+    }
+
+    const handleEditSubmit = e => {
+        e.preventDefault()
+        alert('Edited user: ' + JSON.stringify(editForm))
+        setEditModalOpen(false)
     }
 
     const fields = [
@@ -76,6 +99,30 @@ const Users = () => {
         }
     ]
 
+    const editFields = [
+        {
+            label: 'Name',
+            type: 'text',
+            name: 'name',
+            value: editForm.name,
+            onChange: handleEditChange,
+        },
+        {
+            label: 'Email Address',
+            type: 'email',
+            name: 'email',
+            value: editForm.email,
+            onChange: handleEditChange
+        },
+        {
+            label: 'Password',
+            type: 'password',
+            name: 'password',
+            value: editForm.password,
+            onChange: handleEditChange
+        }
+    ]
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <button
@@ -84,7 +131,12 @@ const Users = () => {
             >
                 + Create New User
             </button>
-            <Table columns={columns} data={data} />
+            <Table
+                columns={columns}
+                data={data}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+            />
             <Modal
                 open={open}
                 onClose={() => setOpen(false)}
@@ -92,6 +144,14 @@ const Users = () => {
                 fields={fields}
                 onSubmit={handleSubmit}
                 submitLabel="Create Account"
+            />
+            <Edit
+                open={editModalOpen}
+                onClose={() => setEditModalOpen(false)}
+                title="Edit User"
+                fields={editFields}
+                onSubmit={handleEditSubmit}
+                submitLabel="Save"
             />
         </div>
     )
