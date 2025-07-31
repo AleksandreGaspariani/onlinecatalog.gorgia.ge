@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import styles from '../../assets/css/AdminPage.module.css'
 import CategoryTable from './CategoryTable'
 import ProductTable from './ProductTable'
+import { useSelector, useDispatch } from 'react-redux'
+import { setSelectedTab } from '../../store/adminSlice'
 
 const sidebarItems = [
     { label: 'კატეგორიები', key: 'categories' },
@@ -14,7 +16,8 @@ const sidebarItems = [
 
 const AdminPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [selectedTab, setSelectedTab] = useState('categories');
+    const selectedTab = useSelector(state => state.admin.selectedTab)
+    const dispatch = useDispatch()
 
     return (
         <div className={styles.adminContainer}>
@@ -44,7 +47,7 @@ const AdminPage = () => {
                                     background: selectedTab === item.key ? '#e0e5eb85' : undefined,
                                     fontWeight: selectedTab === item.key ? 'bold' : undefined
                                 }}
-                                onClick={() => setSelectedTab(item.key)}
+                                onClick={() => dispatch(setSelectedTab(item.key))}
                             >
                                 <span className={styles.adminSidebarLabel}>{item.label}</span>
                                 <span className={styles.adminSidebarArrow}>{'›'}</span>
