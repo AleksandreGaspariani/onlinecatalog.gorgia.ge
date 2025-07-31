@@ -57,10 +57,12 @@ const AdminPage = () => {
                 )}
             </aside>
             <main className={styles.adminMain}>
-                {/* Render table based on selectedTab */}
                 {selectedTab === 'categories' && <CategoryTable />}
                 {selectedTab === 'products' && <ProductTable />}
-                {/* ...you can add more tab content here as needed... */}
+                {selectedTab === 'requests' && <div>Requests Table</div>}
+                {selectedTab === 'orders' && <div>Orders Table</div>}
+                {selectedTab === 'profile' && <div>Profile Settings</div>}
+                {selectedTab === 'users' && <div>Users Management</div>}
             </main>
         </div>
     )
