@@ -76,16 +76,19 @@
 }
 
 .modalForm {
-    margin-top: 18px;
+    margin-top: 10px;
+    /* уменьшено с 18px */
 }
 
 .modalFormLabel {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    /* уменьшено с 8px */
     font-size: 16px;
     color: #444;
     text-align: left;
-    margin-top: 2rem;
+    margin-top: 16px;
+    /* уменьшено с 2rem (~32px) */
 }
 
 .modalFormInput {
@@ -94,7 +97,8 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     font-size: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
+    /* уменьшено с 20px */
     box-sizing: border-box;
     background-color: #ebebeb88;
     color: #000;
@@ -102,7 +106,7 @@
 
 .modalFormBtn {
     width: 100%;
-    background: #12608a;
+    background: #017dbe;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -111,4 +115,5 @@
     font-weight: 500;
     cursor: pointer;
     box-shadow: 0 2px 8px 0 #e6e6e6;
+    margin-top: 8px;
 }

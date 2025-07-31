@@ -1,11 +1,61 @@
 import React, { useState } from 'react'
-import styles from '../../assets/css/AdminPage.module.css'
 import product from '../../assets/css/ProductPage.module.css'
 import Modal from './Modal'
+import Table from './Table'
 
 const ProductTable = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [productCode, setProductCode] = useState('')
+
+    const handleProductSubmit = e => {
+        e.preventDefault()
+        // ...submit logic...
+    }
+
+    const columns = [
+        { header: '#', accessor: 'id' },
+        { header: 'კატეგორია', accessor: 'category' },
+        { header: 'ნუმეროლოგიური სახელი', accessor: 'numerologicalName' },
+        { header: 'ღირებულება', accessor: 'price' },
+        { header: 'BM კოდი', accessor: 'bmCode' },
+        { header: 'არტიკული', accessor: 'article' },
+        { header: 'შტრიხკოდი', accessor: 'barcode' },
+        { header: 'ზომა', accessor: 'size' },
+        { header: 'პაკეტის რაოდენობა', accessor: 'packageCount' },
+        { header: 'მწარმოებელი', accessor: 'manufacturer' },
+        { header: 'ანოტაცია', accessor: 'annotation' },
+        { header: 'სურათები', accessor: 'images' },
+        { header: 'ქმედებები', accessor: 'actions' }
+    ]
+
+    const data = [
+        {
+            id: 1,
+            category: 'მაგალითი',
+            numerologicalName: 'სახელი',
+            price: '100₾',
+            bmCode: 'BM-000000',
+            article: '12345',
+            barcode: '20099999891215asdasdasdasdsad',
+            size: '1x1',
+            packageCount: 10,
+            manufacturer: 'მწარმოებელი',
+            annotation: 'ანოტაცია',
+            images: 'img.jpg',
+            actions: 'რედაქტირება | წაშლა'
+        }
+    ]
+
+    const productFields = [
+        {
+            label: 'პროდუქტის კოდი',
+            type: 'text',
+            name: 'productCode',
+            value: productCode,
+            onChange: e => setProductCode(e.target.value),
+            autoFocus: true
+        }
+    ]
 
     return (
         <>
@@ -20,70 +70,12 @@ const ProductTable = () => {
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}
                 title="პროდუქტის დამატება"
-            >
-                <form
-                    className={product.modalForm}
-                    onSubmit={e => {
-                        e.preventDefault()
-                    }}
-                >
-                    <label
-                        htmlFor="productCode"
-                        className={product.modalFormLabel}
-                    >
-                        პროდუქტის კოდი
-                    </label>
-                    <input
-                        id="productCode"
-                        type="text"
-                        value={productCode}
-                        onChange={e => setProductCode(e.target.value)}
-                        className={product.modalFormInput}
-                        autoFocus
-                    />
-                    <button
-                        type="submit"
-                        className={product.modalFormBtn}
-                    >
-                        დამატება
-                    </button>
-                </form>
-            </Modal>
+                fields={productFields}
+                onSubmit={handleProductSubmit}
+                submitLabel="დამატება"
+            />
 
-            <div className={styles.adminTableWrapper}>
-                <div className={styles.adminTableInner}>
-                    <div className={`${styles.adminTableRow} ${styles.adminTableHeaderRow}`}>
-                        <div className={styles.adminTableCell}>#</div>
-                        <div className={styles.adminTableCell}>კატეგორია</div>
-                        <div className={styles.adminTableCell}>ნუმეროლოგიური სახელი</div>
-                        <div className={styles.adminTableCell}>ღირებულება</div>
-                        <div className={styles.adminTableCell}>BM კოდი</div>
-                        <div className={styles.adminTableCell}>არტიკული</div>
-                        <div className={styles.adminTableCell}>შტრიხკოდი</div>
-                        <div className={styles.adminTableCell}>ზომა</div>
-                        <div className={styles.adminTableCell}>პაკეტის რაოდენობა</div>
-                        <div className={styles.adminTableCell}>მწარმოებელი</div>
-                        <div className={styles.adminTableCell}>ანოტაცია</div>
-                        <div className={styles.adminTableCell}>სურათები</div>
-                        <div className={styles.adminTableCell}>ქმედებები</div>
-                    </div>
-                    <div className={styles.adminTableRow}>
-                        <div className={styles.adminTableCell}>1</div>
-                        <div className={styles.adminTableCell}>მაგალითი</div>
-                        <div className={styles.adminTableCell}>სახელი</div>
-                        <div className={styles.adminTableCell}>100₾</div>
-                        <div className={styles.adminTableCell}>BM-000000</div>
-                        <div className={styles.adminTableCell}>12345</div>
-                        <div className={styles.adminTableCell}>20099999891215asdasdasdasdsad</div>
-                        <div className={styles.adminTableCell}>1x1</div>
-                        <div className={styles.adminTableCell}>10</div>
-                        <div className={styles.adminTableCell}>მწარმოებელი</div>
-                        <div className={styles.adminTableCell}>ანოტაცია</div>
-                        <div className={styles.adminTableCell}>img.jpg</div>
-                        <div className={styles.adminTableCell}>რედაქტირება | წაშლა</div>
-                    </div>
-                </div>
-            </div>
+            <Table columns={columns} data={data} />
         </>
     )
 }

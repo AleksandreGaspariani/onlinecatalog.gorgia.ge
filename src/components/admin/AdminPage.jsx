@@ -1,9 +1,13 @@
 import React, { useState } from 'react'
 import styles from '../../assets/css/AdminPage.module.css'
-import CategoryTable from './CategoryTable'
-import ProductTable from './ProductTable'
 import { useSelector, useDispatch } from 'react-redux'
 import { setSelectedTab } from '../../store/adminSlice'
+import CategoryTable from './CategoryTable'
+import ProductTable from './ProductTable'
+import OrderRequest from './OrderRequest'
+import Orders from './Orders'
+import Profile from './Profile'
+import Users from './Users'
 
 const sidebarItems = [
     { label: 'კატეგორიები', key: 'categories' },
@@ -62,10 +66,10 @@ const AdminPage = () => {
             <main className={styles.adminMain}>
                 {selectedTab === 'categories' && <CategoryTable />}
                 {selectedTab === 'products' && <ProductTable />}
-                {selectedTab === 'requests' && <div>Requests Table</div>}
-                {selectedTab === 'orders' && <div>Orders Table</div>}
-                {selectedTab === 'profile' && <div>Profile Settings</div>}
-                {selectedTab === 'users' && <div>Users Management</div>}
+                {selectedTab === 'requests' && <OrderRequest />}
+                {selectedTab === 'orders' && <Orders />}
+                {selectedTab === 'profile' && <Profile />}
+                {selectedTab === 'users' && <Users />}
             </main>
         </div>
     )

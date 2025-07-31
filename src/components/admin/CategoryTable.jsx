@@ -1,23 +1,21 @@
 import React from 'react'
-import styles from '../../assets/css/AdminPage.module.css'
+import Table from './Table'
+
+const columns = [
+    { header: '#', accessor: 'id' },
+    { header: 'დასახელება', accessor: 'name' },
+    { header: 'სურათი', accessor: 'image' },
+    { header: 'მოქმედება', accessor: 'actions' }
+]
+
+const data = [
+    { id: 1, name: 'მაგალითი კატეგორია', image: 'img.jpg', actions: 'რედაქტირება | წაშლა' }
+]
 
 const CategoryTable = () => (
-    <div className={styles.adminTableWrapper}>
-        <div className={styles.adminTableInner}>
-            <div className={`${styles.adminTableRow} ${styles.adminTableHeaderRow}`}>
-                <div className={styles.adminTableCell}>#</div>
-                <div className={styles.adminTableCell}>დასახელება</div>
-                <div className={styles.adminTableCell}>სურათი</div>
-                <div className={styles.adminTableCell}>მოქმედება</div>
-            </div>
-            <div className={styles.adminTableRow}>
-                <div className={styles.adminTableCell}>1</div>
-                <div className={styles.adminTableCell}>მაგალითი კატეგორია</div>
-                <div className={styles.adminTableCell}>img.jpg</div>
-                <div className={styles.adminTableCell}>რედაქტირება | წაშლა</div>
-            </div>
-        </div>
-    </div>
+    <>
+        <Table columns={columns} data={data} />
+    </>
 )
 
 export default CategoryTable
