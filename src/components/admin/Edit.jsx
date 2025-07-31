@@ -1,73 +1,70 @@
 import React from 'react'
-import Modal from './Modal'
 import styles from '../../assets/css/Modal.module.css'
 import product from '../../assets/css/ProductPage.module.css'
-
-const modalStyle = {
-    maxWidth: '700px',
-    width: '100%',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    margin: '40px auto',
-    borderRadius: '12px'
-}
+import Modal from './Modal'
 
 const Edit = ({ open, onClose, title, fields, onSubmit, submitLabel, splitColumns }) => {
     if (!open) return null
 
-    let leftFields = fields, rightFields = []
     if (splitColumns && Array.isArray(fields)) {
-        const mid = Math.ceil(fields.length / 2)
-        leftFields = fields.slice(0, mid)
-        rightFields = fields.slice(mid)
-    }
-
-    return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modalContent} style={modalStyle}>
-                <div className={styles.modalHeader}>
-                    {title && <h2 className={styles.modalTitle}>{title}</h2>}
-                    <button
-                        className={styles.modalCloseBtn}
-                        onClick={onClose}
-                        aria-label="Close"
-                    >
-                        ×
-                    </button>
-                </div>
-                <div className={styles.modalBody}>
-                    {splitColumns ? (
-                        <form onSubmit={onSubmit} className={product.modalForm} style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                {leftFields.map((field, idx) => (
-                                    <div key={field.name || idx} style={{ marginBottom: 12 }}>
-                                        <label className={product.modalFormLabel} htmlFor={field.name} style={{ display: 'block', marginBottom: 4 }}>{field.label}</label>
-                                        <input
-                                            id={field.name}
-                                            name={field.name}
-                                            type={field.type}
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            className={product.modalFormInput}
-                                            autoFocus={field.autoFocus}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                {rightFields.map((field, idx) => (
-                                    <div key={field.name || idx} style={{ marginBottom: 12 }}>
-                                        <label className={product.modalFormLabel} htmlFor={field.name} style={{ display: 'block', marginBottom: 4 }}>{field.label}</label>
-                                        <input
-                                            id={field.name}
-                                            name={field.name}
-                                            type={field.type}
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                            className={product.modalFormInput}
-                                            autoFocus={field.autoFocus}
-                                        />
-                                    </div>
+        const rows = []
+        for (let i = 0; i < fields.length; i += 2) {
+            rows.push([fields[i], fields[i + 1] || null])
+        }
+        return (
+            <div className={styles.modalOverlay}>
+                <div
+                    className={styles.modalContent}
+                    style={{ padding: '40px 32px 32px 32px', width: 520 }}
+                >
+                    <div className={styles.modalHeader}>
+                        {title && <h2 className={styles.modalTitle}>{title}</h2>}
+                        <button
+                            className={styles.modalCloseBtn}
+                            onClick={onClose}
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
+                    </div>
+                    <div className={styles.modalBody}>
+                        <form onSubmit={onSubmit} className={product.modalForm}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                                {rows.map(([left, right], idx) => (
+                                    <React.Fragment key={idx}>
+                                        <div style={{ marginBottom: 0, marginLeft: left ? 12 : 0 }}>
+                                            {left && (
+                                                <>
+                                                    <label className={product.modalFormLabel} htmlFor={left.name} style={{ display: 'block', marginBottom: 5 }}>{left.label}</label>
+                                                    <input
+                                                        id={left.name}
+                                                        name={left.name}
+                                                        type={left.type}
+                                                        value={left.value}
+                                                        onChange={left.onChange}
+                                                        className={product.modalFormInput}
+                                                        autoFocus={left.autoFocus}
+                                                    />
+                                                </>
+                                            )}
+                                        </div>
+                                        <div style={{ marginBottom: 0, marginLeft: right ? 12 : 0 }}>
+                                            {right && (
+                                                <>
+                                                    <label className={product.modalFormLabel} htmlFor={right.name} style={{ display: 'block', marginBottom: 5 }}>{right.label}</label>
+                                                    <input
+                                                        id={right.name}
+                                                        name={right.name}
+                                                        type={right.type}
+                                                        value={right.value}
+                                                        onChange={right.onChange}
+                                                        className={product.modalFormInput}
+                                                        autoFocus={right.autoFocus}
+                                                    />
+                                                </>
+                                            )}
+                                        </div>
+                                    </React.Fragment>
                                 ))}
                             </div>
                             <button
@@ -78,19 +75,21 @@ const Edit = ({ open, onClose, title, fields, onSubmit, submitLabel, splitColumn
                                 {submitLabel || 'Save'}
                             </button>
                         </form>
-                    ) : (
-                        <Modal
-                            open={true}
-                            onClose={onClose}
-                            title={title}
-                            fields={fields}
-                            onSubmit={onSubmit}
-                            submitLabel={submitLabel || 'Save'}
-                        />
-                    )}
+                    </div>
                 </div>
-            </div>
-        </div>
+            </div >
+        )
+    }
+
+    return (
+        <Modal
+            open={open}
+            onClose={onClose}
+            title={title}
+            fields={fields}
+            onSubmit={onSubmit}
+            submitLabel={submitLabel}
+        />
     )
 }
 

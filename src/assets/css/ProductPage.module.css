@@ -13,7 +13,6 @@
     transition: background 0.2s;
 }
 
-/* Modal styles */
 .modalOverlay {
     position: fixed;
     z-index: 1000;

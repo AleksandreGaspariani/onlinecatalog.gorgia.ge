@@ -112,7 +112,6 @@ const ProductTable = () => {
         { label: 'პაკეტის რაოდენობა', type: 'text', name: 'packageCount', value: editForm.packageCount, onChange: handleEditChange },
         { label: 'მწარმოებელი', type: 'text', name: 'manufacturer', value: editForm.manufacturer, onChange: handleEditChange },
         { label: 'ანოტაცია', type: 'text', name: 'annotation', value: editForm.annotation, onChange: handleEditChange },
-        { label: 'სურათები', type: 'text', name: 'images', value: editForm.images, onChange: handleEditChange }
     ]
 
     return (
