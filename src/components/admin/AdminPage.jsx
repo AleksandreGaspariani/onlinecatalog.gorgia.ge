@@ -1,17 +1,20 @@
 import React, { useState } from 'react'
 import styles from '../../assets/css/AdminPage.module.css'
+import CategoryTable from './CategoryTable'
+import ProductTable from './ProductTable'
 
 const sidebarItems = [
-    { label: 'კატეგორიები', },
-    { label: 'პროდუქტები' },
-    { label: 'შესყიდვის მოთხოვნები' },
-    { label: 'შეკვეთები' },
-    { label: 'პროფილი' },
-    { label: 'მომხმარებლები' },
+    { label: 'კატეგორიები', key: 'categories' },
+    { label: 'პროდუქტები', key: 'products' },
+    { label: 'შესყიდვის მოთხოვნები', key: 'requests' },
+    { label: 'შეკვეთები', key: 'orders' },
+    { label: 'პროფილი', key: 'profile' },
+    { label: 'მომხმარებლები', key: 'users' },
 ];
 
 const AdminPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
+    const [selectedTab, setSelectedTab] = useState('categories');
 
     return (
         <div className={styles.adminContainer}>
@@ -34,7 +37,15 @@ const AdminPage = () => {
                 {sidebarOpen && (
                     <nav className={styles.adminSidebarNav}>
                         {sidebarItems.map((item, idx) => (
-                            <div className={styles.adminSidebarItem} key={idx}>
+                            <div
+                                className={styles.adminSidebarItem}
+                                key={idx}
+                                style={{
+                                    background: selectedTab === item.key ? '#e0e5eb85' : undefined,
+                                    fontWeight: selectedTab === item.key ? 'bold' : undefined
+                                }}
+                                onClick={() => setSelectedTab(item.key)}
+                            >
                                 <span className={styles.adminSidebarLabel}>{item.label}</span>
                                 <span className={styles.adminSidebarArrow}>{'›'}</span>
                             </div>
@@ -46,14 +57,10 @@ const AdminPage = () => {
                 )}
             </aside>
             <main className={styles.adminMain}>
-                <div className={styles.adminTableHeader}>
-                    <div className={`${styles.adminTableRow} ${styles.adminTableHeaderRow}`}>
-                        <div className={styles.adminTableCell} style={{ width: '8%' }}>#</div>
-                        <div className={styles.adminTableCell} style={{ width: '28%' }}>დასახელება</div>
-                        <div className={styles.adminTableCell} style={{ width: '28%' }}>სურათი</div>
-                        <div className={styles.adminTableCell} style={{ width: '28%' }}>მოქმედება</div>
-                    </div>
-                </div>
+                {/* Render table based on selectedTab */}
+                {selectedTab === 'categories' && <CategoryTable />}
+                {selectedTab === 'products' && <ProductTable />}
+                {/* ...you can add more tab content here as needed... */}
             </main>
         </div>
     )
