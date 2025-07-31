@@ -2,8 +2,7 @@ import React from 'react'
 import styles from '../../assets/css/AdminPage.module.css'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 
-const Table = ({ columns, data, onEdit, onDelete, actions }) => {
-    const hasActionsColumn = columns.some(col => col.accessor === 'actions')
+const Table = ({ columns, data, onEdit, onDelete }) => {
 
     const renderActions = (row) => (
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
@@ -56,9 +55,11 @@ const Table = ({ columns, data, onEdit, onDelete, actions }) => {
                     <div className={styles.adminTableRow} key={rowIdx}>
                         {columns.map((col, colIdx) => (
                             <div className={styles.adminTableCell} key={colIdx}>
-                                {col.accessor === 'actions' && (onEdit || onDelete)
-                                    ? renderActions(row)
-                                    : row[col.accessor]
+                                {col.cell
+                                    ? col.cell(row)
+                                    : col.accessor === 'actions' && (onEdit || onDelete)
+                                        ? renderActions(row)
+                                        : row[col.accessor]
                                 }
                             </div>
                         ))}

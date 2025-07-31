@@ -3,11 +3,18 @@ import product from '../../assets/css/ProductPage.module.css'
 import Modal from './Modal'
 import Table from './Table'
 import Edit from './Edit'
+import DeleteModal from './DeleteModal'
+import ImagePreviewModal from './ImagePreviewModal'
 
 const ProductTable = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [productCode, setProductCode] = useState('')
     const [editModalOpen, setEditModalOpen] = useState(false)
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [rowToDelete, setRowToDelete] = useState(null)
+    const [imageModalOpen, setImageModalOpen] = useState(false)
+    const [imageToPreview, setImageToPreview] = useState(null)
+    const [imageIdToPreview, setImageIdToPreview] = useState(null)
     const [editForm, setEditForm] = useState({
         numerologicalName: '',
         price: '',
@@ -42,9 +49,14 @@ const ProductTable = () => {
         setEditModalOpen(true)
     }
     const handleDelete = (row) => {
-        if (window.confirm(`Delete product: ${row.numerologicalName}?`)) {
-            alert('Deleted!')
-        }
+        setRowToDelete(row)
+        setDeleteModalOpen(true)
+    }
+
+    const handleDeleteConfirm = () => {
+        alert('Deleted: ' + rowToDelete?.numerologicalName)
+        setDeleteModalOpen(false)
+        setRowToDelete(null)
     }
 
     const handleEditChange = e => {
@@ -55,6 +67,12 @@ const ProductTable = () => {
         e.preventDefault()
         alert('Edited product: ' + JSON.stringify(editForm))
         setEditModalOpen(false)
+    }
+
+    const handleImagePreview = (img, row) => {
+        setImageToPreview(img)
+        setImageIdToPreview(row.id)
+        setImageModalOpen(true)
     }
 
     const columns = [
@@ -69,7 +87,18 @@ const ProductTable = () => {
         { header: 'პაკეტის რაოდენობა', accessor: 'packageCount' },
         { header: 'მწარმოებელი', accessor: 'manufacturer' },
         { header: 'ანოტაცია', accessor: 'annotation' },
-        { header: 'სურათები', accessor: 'images' },
+        {
+            header: 'სურათები',
+            accessor: 'images',
+            cell: row => (
+                <button
+                    className={product.imagePreviewBtn}
+                    onClick={() => handleImagePreview(row.images, row)}
+                >
+                    ნახვა
+                </button>
+            )
+        },
         { header: 'ქმედებები', accessor: 'actions' }
     ]
 
@@ -146,6 +175,25 @@ const ProductTable = () => {
                 onSubmit={handleEditSubmit}
                 submitLabel="შენახვა"
                 splitColumns={true}
+            />
+            <DeleteModal
+                open={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="წაშლის დადასტურება"
+                message={rowToDelete ? `ნამდვილად გსურთ წაშალოთ პროდუქტი: ${rowToDelete.numerologicalName}?` : ''}
+            />
+            <ImagePreviewModal
+                open={imageModalOpen}
+                onClose={() => setImageModalOpen(false)}
+                image={imageToPreview}
+                imageId={imageIdToPreview}
+                onImageUpdated={() => {
+                    setImageModalOpen(false)
+                }}
+                onImageDeleted={() => {
+                    setImageModalOpen(false)
+                }}
             />
         </>
     )

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Table from './Table'
 import Modal from './Modal'
 import Edit from './Edit'
+import DeleteModal from './DeleteModal'
 import '../../assets/css/AdminPage.module.css'
 import product from '../../assets/css/ProductPage.module.css'
 
@@ -15,9 +16,9 @@ const columns = [
     { header: 'კონტრაქტორის ტელეფონის ნომერი', accessor: 'phone' },
     { header: 'კონტრაქტორის სახელი', accessor: 'contragentName' },
     { header: 'კონტრაქტორის ელფოსტა', accessor: 'contragentEmail' },
-    { header: 'Email', accessor: 'email' },
-    { header: 'Password', accessor: 'password' },
-    { header: 'Actions', accessor: 'actions' },
+    { header: 'ელფოსტა', accessor: 'email' },
+    { header: 'პაროლი', accessor: 'password' },
+    { header: 'მოქმედებები', accessor: 'actions' },
 
 ]
 
@@ -35,6 +36,8 @@ const Users = () => {
         password: ''
     })
     const [data, setData] = useState([])
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+    const [rowToDelete, setRowToDelete] = useState(null)
 
     useEffect(() => {
         fetch('/api/users')
@@ -60,9 +63,14 @@ const Users = () => {
         setEditModalOpen(true)
     }
     const handleDelete = (user) => {
-        if (window.confirm(`Delete user: ${user.name}?`)) {
-            alert('Deleted!')
-        }
+        setRowToDelete(user)
+        setDeleteModalOpen(true)
+    }
+
+    const handleDeleteConfirm = () => {
+        alert('Deleted: ' + rowToDelete?.name)
+        setDeleteModalOpen(false)
+        setRowToDelete(null)
     }
 
     const handleEditChange = e => {
@@ -152,6 +160,13 @@ const Users = () => {
                 fields={editFields}
                 onSubmit={handleEditSubmit}
                 submitLabel="Save"
+            />
+            <DeleteModal
+                open={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="წაშლის დადასტურება"
+                message={rowToDelete ? `ნამდვილად გსურთ წაშალოთ მომხმარებელი: ${rowToDelete.name}?` : ''}
             />
         </div>
     )
