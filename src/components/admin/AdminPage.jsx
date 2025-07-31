@@ -25,7 +25,7 @@ const AdminPage = () => {
                         aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
                         style={{ border: 'none', outline: 'none', background: 'none' }}
                     >
-                        ≡
+                        {sidebarOpen ? '×' : '≡'}
                     </button>
                     {sidebarOpen && (
                         <span className={styles.adminCatalogTitle}>Catalog</span>
