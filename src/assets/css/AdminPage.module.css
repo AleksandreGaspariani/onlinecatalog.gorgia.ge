@@ -15,10 +15,23 @@
     min-height: 100vh;
     position: relative;
     justify-content: flex-start;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 240px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+.adminSidebarClosed {
+    display: flex;
+    align-items: center;
+    width: 60px;
+    opacity: 0.7;
 }
 
 .adminSidebarHeader {
-    padding: 32px 0 24px;
+    display: flex;
+    flex-direction: flex-start;
+    padding: 32px 10px 24px;
     width: 100%;
 }
 
@@ -62,6 +75,11 @@
 .adminSidebarLabel {
     font-size: 16px;
     font-weight: 400;
+    text-align: left;
+    justify-content: flex-start;
+    align-items: flex-start;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .adminSidebarArrow {
@@ -135,4 +153,24 @@
 
 .adminTableCell:last-child {
     border-right: none;
+}
+
+.sidebarToggleBtn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    color: #003d66;
+    cursor: pointer;
+    margin-left: 12px;
+    margin-right: 12px;
+    margin-bottom: 0;
+    margin-top: 0;
+    padding: 0;
+    outline: none;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
 }

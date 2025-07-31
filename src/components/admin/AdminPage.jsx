@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from '../../assets/css/AdminPage.module.css'
 
 const sidebarItems = [
@@ -11,24 +11,39 @@ const sidebarItems = [
 ];
 
 const AdminPage = () => {
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
     return (
         <div className={styles.adminContainer}>
-            <aside className={styles.adminSidebar}>
+            <aside
+                className={`${styles.adminSidebar} ${!sidebarOpen ? styles.adminSidebarClosed : ''}`}
+            >
                 <div className={styles.adminSidebarHeader}>
-                    <span className={styles.adminCatalogTitle}>Catalog</span>
-                </div>
-                <nav className={styles.adminSidebarNav}>
-                    {sidebarItems.map((item, idx) => (
-                        <div className={styles.adminSidebarItem} key={idx}>
-                            <span className={styles.adminSidebarLabel}>{item.label}</span>
-                            <span className={styles.adminSidebarArrow}>{'›'}</span>
-                        </div>
-                    ))}
-                    <button className={styles.adminHomeBtn}>
-                        გასვლა
+                    <button
+                        className={styles.sidebarToggleBtn}
+                        onClick={() => setSidebarOpen(!sidebarOpen)}
+                        aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
+                        style={{ border: 'none', outline: 'none', background: 'none' }}
+                    >
+                        ≡
                     </button>
-                </nav>
-
+                    {sidebarOpen && (
+                        <span className={styles.adminCatalogTitle}>Catalog</span>
+                    )}
+                </div>
+                {sidebarOpen && (
+                    <nav className={styles.adminSidebarNav}>
+                        {sidebarItems.map((item, idx) => (
+                            <div className={styles.adminSidebarItem} key={idx}>
+                                <span className={styles.adminSidebarLabel}>{item.label}</span>
+                                <span className={styles.adminSidebarArrow}>{'›'}</span>
+                            </div>
+                        ))}
+                        <button className={styles.adminHomeBtn}>
+                            გასვლა
+                        </button>
+                    </nav>
+                )}
             </aside>
             <main className={styles.adminMain}>
                 <div className={styles.adminTableHeader}>
@@ -39,7 +54,6 @@ const AdminPage = () => {
                         <div className={styles.adminTableCell} style={{ width: '28%' }}>მოქმედება</div>
                     </div>
                 </div>
-                {/* Table body can be added here */}
             </main>
         </div>
     )
