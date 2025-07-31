@@ -4,15 +4,31 @@ import '../assets/css/HeaderModal.css'
 
 const HeaderModal = () => {
   const [showDropdown, setShowDropdown] = React.useState(false)
+  const searchRef = React.useRef(null)
 
   const handleSearchClick = () => {
     setShowDropdown(true)
     console.log("search clicked")
   }
 
+  React.useEffect(() => {
+    if (!showDropdown) return
+
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showDropdown])
+
   return (
     <div className="header-modal">
-      <div className="header-search">
+      <div className="header-search" ref={searchRef}>
         <input
           type="text"
           placeholder ="ძიება"

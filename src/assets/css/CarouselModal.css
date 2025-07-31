@@ -1,0 +1,66 @@
+.carousel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 35px;
+}
+
+.carousel-title {
+  font-family: Sylfaen;
+  text-align: start;
+  margin: 0;
+  margin-left: 50px;
+  font-size: 28px;
+}
+
+.carousel-seeall-btn {
+  color: black;
+  border: none;
+  padding: 8px 35px;
+  font-family: Sylfaen;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+}
+
+.carousel-seeall-btn:focus,
+.carousel-seeall-btn:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.carousel-seeall-btn:active {
+  text-decoration: underline;
+}
+.carousel-container {
+          margin-bottom: 20px;
+          overflow: hidden;
+          position: relative;
+          box-sizing: border-box;
+          max-width: 100%;
+}
+
+.carousel-item {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+
+
+/* arrow styling */
+.slick-prev:before, .slick-next:before {
+            color: #c9c9c9 !important;
+            font-size: 32px;
+          }
+.slick-prev {
+    left: 15px !important;
+    z-index: 2;
+}
+.slick-next {
+    right: 10px !important;
+    z-index: 2;
+}

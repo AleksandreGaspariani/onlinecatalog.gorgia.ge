@@ -13,15 +13,16 @@ const CategoryDisplay = ({ imageSrc, name }) => {
           alignItems: 'center',
           justifyContent: 'center',
           margin: '0 auto',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+          boxShadow: '0 8px 32px rgba(0,0,0,0.28), 0 4px 16px rgba(0,0,0,0.18)',
+          transition: 'box-shadow 0.2s',
         }}
       >
         <img
           src={imageSrc}
           // alt={name}
           style={{
-            width: '80px',
-            height: '80px',
+            width: '110px',
+            height: '110px',
             objectFit: 'cover',
             borderRadius: '50%',
             background: 'white'

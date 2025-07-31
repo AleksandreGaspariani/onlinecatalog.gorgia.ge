@@ -19,7 +19,7 @@ const FooterModal = () => {
         </div>
 
         <p className="footer-note">
-          © All rights reserved. Made by GORGIA
+          © All rights reserved. 
         </p>
       </div>
     </footer>
