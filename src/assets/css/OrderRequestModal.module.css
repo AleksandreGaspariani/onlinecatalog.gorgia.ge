@@ -1,0 +1,138 @@
+.orderModalHeader {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.orderModalTitle {
+    text-align: left;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.orderModalCode {
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.orderModalDesc {
+    text-align: left;
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 400;
+}
+
+.orderModalQty {
+    color: #333;
+    margin-bottom: 4px;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.orderModalNote {
+    color: #666;
+    font-size: 14px;
+    margin: 20px 0 0 0;
+    font-style: italic;
+    font-weight: 300;
+}
+
+.orderModalForm {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 15px;
+}
+
+.orderModalRow {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.orderModalCol {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.orderModalColFull {
+    flex: 1 1 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.orderModalCol label,
+.orderModalColFull label {
+    color: #333;
+    font-size: 13px;
+    margin-bottom: 4px;
+    font-weight: 400;
+}
+
+.orderModalInput {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    background: white;
+    color: #333;
+    margin-top: 2px;
+    outline: none;
+    height: 36px;
+    box-sizing: border-box;
+}
+
+.orderModalInput[type="date"]::-webkit-input-placeholder {
+    color: #bdbdbd;
+}
+
+.orderModalInput[type="date"]::-moz-placeholder {
+    color: #bdbdbd;
+}
+
+.orderModalInput[type="date"]:-ms-input-placeholder {
+    color: #bdbdbd;
+}
+
+.orderModalInput[type="date"]::placeholder {
+    color: #bdbdbd;
+}
+
+.orderModalTextarea {
+    width: 100%;
+    padding: 6px 10px;
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+    font-size: 13px;
+    background: white;
+    color: #333;
+    margin-top: 2px;
+    min-height: 60px;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.orderModalBtn {
+    width: 120px;
+    background: #017dbe;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 0;
+    font-size: 15px;
+    font-weight: 400;
+    cursor: pointer;
+    margin-top: 8px;
+}
+
+.orderModalBtn:hover {
+    background: #0169a1;
+}

@@ -14,7 +14,7 @@ const sidebarItems = [
     { label: 'მთავარი', key: 'main' },
     { label: 'კატეგორიები', key: 'categories' },
     { label: 'პროდუქტები', key: 'products' },
-    { label: 'შესყიდვის მოთხოვნები', key: 'requests' },
+    { label: 'შეკვეთების მოთხოვნები', key: 'requests' },
     { label: 'შეკვეთები', key: 'orders' },
     { label: 'პროფილი', key: 'profile' },
     { label: 'მომხმარებლები', key: 'users' },
