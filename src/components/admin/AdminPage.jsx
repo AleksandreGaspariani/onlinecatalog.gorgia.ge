@@ -9,15 +9,16 @@ import Orders from './OrdersTable'
 import Profile from './ProfileTable'
 import Users from './UsersTable'
 import { useNavigate } from 'react-router-dom'
+import { FaHome, FaThList, FaBoxOpen, FaClipboardList, FaShoppingCart, FaUserCircle, FaUsers } from 'react-icons/fa'
 
 const sidebarItems = [
-    { label: 'მთავარი', key: 'main' },
-    { label: 'კატეგორიები', key: 'categories' },
-    { label: 'პროდუქტები', key: 'products' },
-    { label: 'შეკვეთების მოთხოვნები', key: 'requests' },
-    { label: 'შეკვეთები', key: 'orders' },
-    { label: 'პროფილი', key: 'profile' },
-    { label: 'მომხმარებლები', key: 'users' },
+    { label: 'მთავარი', key: 'main', icon: <FaHome /> },
+    { label: 'კატეგორიები', key: 'categories', icon: <FaThList /> },
+    { label: 'პროდუქტები', key: 'products', icon: <FaBoxOpen /> },
+    { label: 'შეკვეთების მოთხოვნები', key: 'requests', icon: <FaClipboardList /> },
+    { label: 'შეკვეთები', key: 'orders', icon: <FaShoppingCart /> },
+    { label: 'პროფილი', key: 'profile', icon: <FaUserCircle /> },
+    { label: 'მომხმარებლები', key: 'users', icon: <FaUsers /> },
 ];
 
 const AdminPage = () => {
@@ -52,7 +53,9 @@ const AdminPage = () => {
                                 key={idx}
                                 style={{
                                     background: selectedTab === item.key ? '#e0e5eb85' : undefined,
-                                    fontWeight: selectedTab === item.key ? 'bold' : undefined
+                                    fontWeight: selectedTab === item.key ? 'bold' : undefined,
+                                    display: 'flex',
+                                    alignItems: 'center'
                                 }}
                                 onClick={() => {
                                     if (item.key === 'main') {
@@ -62,8 +65,13 @@ const AdminPage = () => {
                                     }
                                 }}
                             >
-                                <span className={styles.adminSidebarLabel}>{item.label}</span>
-                                <span className={styles.adminSidebarArrow}>{'›'}</span>
+                                <span style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+                                    <span style={{ marginRight: 18, fontSize: 20, display: 'flex', alignItems: 'center', color: '#174c6f' }}>
+                                        {item.icon}
+                                    </span>
+                                    <span className={styles.adminSidebarLabel} style={{ color: '#174c6f' }}>{item.label}</span>
+                                </span>
+                                <span className={styles.adminSidebarArrow} style={{ color: '#174c6f' }}>{'›'}</span>
                             </div>
                         ))}
                         <button className={styles.adminHomeBtn}>
