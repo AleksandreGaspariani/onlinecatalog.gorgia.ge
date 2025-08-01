@@ -42,7 +42,7 @@ const AdminPage = () => {
                         {sidebarOpen ? '×' : '≡'}
                     </button>
                     {sidebarOpen && (
-                        <span className={styles.adminCatalogTitle}>Catalog</span>
+                        <span className={styles.adminCatalogTitle} onClick={() => window.location.reload()}>Catalog</span>
                     )}
                 </div>
                 {sidebarOpen && (

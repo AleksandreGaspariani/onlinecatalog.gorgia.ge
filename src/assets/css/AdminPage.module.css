@@ -38,6 +38,7 @@
     font-weight: bold;
     color: #003d66;
     letter-spacing: 1px;
+    cursor: pointer;
 }
 
 .adminSidebarNav {

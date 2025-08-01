@@ -11,8 +11,9 @@ import product from '../../assets/css/ProductPage.module.css'
 const columns = [
     { header: '#', accessor: 'id' },
     { header: 'სახელი', accessor: 'name' },
-    { header: 'კონტრაქტორის IBAN', accessor: 'iban' },
-    { header: 'კონტრაქტორის საიდენტიფიკაციო ნომერი', accessor: 'contragentIbanNumber' },
+    { header: 'კონტრაქტორის მისამართი', accessor: 'address' },
+    { header: 'კონტრაქტორის IBAN', accessor: 'contragentIBAN' },
+    { header: 'კონტრაქტორის TIN', accessor: 'contragentTIN' },
     { header: 'კონტრაქტორის ტელეფონის ნომერი', accessor: 'phone' },
     { header: 'კონტრაქტორის სახელი', accessor: 'contragentName' },
     { header: 'კონტრაქტორის ელფოსტა', accessor: 'contragentEmail' },
