@@ -9,6 +9,9 @@ import BathroomPng from '../assets/images/bathroom.png'
 import DecorationPng from '../assets/images/decorations.png'
 import OfficePng from '../assets/images/office.png'
 import ItemCard from './ItemCard';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { slugify } from '../utils/slugify.js';
 
 const popularProducts = [
   { id: 1, name: "Product 1", image: BedroomPng },
@@ -22,6 +25,11 @@ const popularProducts = [
 ];
 
 const CarouselModal = () => {
+  const navigate = useNavigate();
+  const categories = useSelector(state => state.category.categories);
+  const popularCategory = categories.find(cat => cat.name === 'პოპულარული პროდუქტები');
+  const allCategory = categories.find(cat => cat.name === 'ყველა');
+
   const settings = {
     dots: true,
     infinite: true,
@@ -45,13 +53,21 @@ const CarouselModal = () => {
     <div style={{ maxWidth: '80%', margin: "40px auto 0 auto", padding: "0 16px" }}>
       <div className="carousel-header-row">
         <h2 className="carousel-title">პოპულარული პროდუქტები</h2>
-        <button className="carousel-seeall-btn">ნახეთ ყველა &gt;</button>
+        <button
+          className="carousel-seeall-btn"
+          onClick={() => {
+            navigate(`/category/${slugify(allCategory.name)}`);
+            window.scrollTo(0, 0);
+          }}
+        >
+          ნახეთ ყველა &gt;
+        </button>
       </div>
       <div className='carousel-container'>
         <Slider {...settings}>
           {popularProducts.map(product => (
             <div key={product.id} className='carousel-item'>
-              <ItemCard product={product} />
+              <ItemCard product={product} category={popularCategory}/>
             </div>
           ))}
         </Slider>

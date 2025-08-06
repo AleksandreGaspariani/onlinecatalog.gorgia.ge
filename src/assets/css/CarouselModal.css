@@ -36,11 +36,11 @@
   text-decoration: underline;
 }
 .carousel-container {
-          margin-bottom: 20px;
-          overflow: hidden;
-          position: relative;
-          box-sizing: border-box;
-          max-width: 100%;
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .carousel-item {
