@@ -55,6 +55,7 @@
   font-size: 14px;
   outline: none;
   border-radius: 24px 0 0 24px;
+  background-color: transparent;
 }
 
 .footer-input button {

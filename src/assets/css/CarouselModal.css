@@ -24,6 +24,7 @@
   font-size: 16px;
   cursor: pointer;
   outline: none;
+  background-color: transparent;
 }
 
 .carousel-seeall-btn:focus,
@@ -35,6 +36,7 @@
 .carousel-seeall-btn:active {
   text-decoration: underline;
 }
+
 .carousel-container {
   margin-bottom: 20px;
   overflow: hidden;
@@ -52,15 +54,18 @@
 
 
 /* arrow styling */
-.slick-prev:before, .slick-next:before {
-            color: #c9c9c9 !important;
-            font-size: 32px;
-          }
-.slick-prev {
-    left: 15px !important;
-    z-index: 2;
+.slick-prev:before,
+.slick-next:before {
+  color: #c9c9c9 !important;
+  font-size: 32px;
 }
+
+.slick-prev {
+  left: 15px !important;
+  z-index: 2;
+}
+
 .slick-next {
-    right: 10px !important;
-    z-index: 2;
+  right: 10px !important;
+  z-index: 2;
 }
