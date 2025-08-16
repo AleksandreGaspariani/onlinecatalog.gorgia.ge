@@ -23,7 +23,7 @@ const sidebarItems = [
 
 const AdminPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const selectedTab = useSelector(state => state.admin.selectedTab)
+    const selectedTab = useSelector(state => state.admin?.selectedTab || 'categories')
     const dispatch = useDispatch()
     const navigate = useNavigate()
 

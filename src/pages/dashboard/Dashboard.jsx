@@ -37,14 +37,14 @@ const Dashboard = () => {
       ...categories
     ]))
   }, [dispatch])
-  
+
   return (
     <div className="dashboard">
       <div style={{ backgroundColor: '#E0E5EB' }}>
         <div className="categories">
           {categories.map((category, index) => (
             <div className="category-item" key={index}>
-              <CategoryDisplay imageSrc={category.img} name={category.name} categoryId={category.id} slug={slugify(category.name)}/>
+              <CategoryDisplay imageSrc={category.img} name={category.name} categoryId={category.id} slug={slugify(category.name)} />
             </div>
           ))}
         </div>

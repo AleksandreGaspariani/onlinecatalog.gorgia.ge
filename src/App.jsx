@@ -9,20 +9,21 @@ import Footer from './components/FooterModal'
 import Category from './pages/category/Category'
 import Product from './pages/product/Product'
 import Breadcrumb from './components/Breadcrumb'
+import AdminPage from './components/admin/AdminPage'
 
 function Layout() {
   const location = useLocation();
   const isDashboard = location.pathname === '/';
+  const hideFooter = location.pathname.startsWith('/admin');
 
   return (
     <div style={{ margin: '0 !important', width: '100% !important' }}>
       <NavRoutes />
-      <div style={{height: 'fit-content', marginTop: '10vh'}}>
+      <div style={{ height: 'fit-content', marginTop: '10vh' }}>
         {!isDashboard && <Breadcrumb />}
         <Outlet />
       </div>
-      
-      <Footer />
+      {!hideFooter && <Footer />}
     </div>
   )
 }
@@ -37,6 +38,7 @@ function App() {
             <Route path="category/:categoryName" element={<Category />} />
             <Route path="category/:categoryName/product/:productName" element={<Product />} />
           </Route>
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
     </Provider>

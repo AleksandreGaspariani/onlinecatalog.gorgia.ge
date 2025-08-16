@@ -1,0 +1,133 @@
+.addProductBtn {
+    display: flex;
+    background: #017dbe;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 32px;
+    font-size: 16px;
+    font-weight: 400;
+    box-shadow: 0 2px 8px 0 #e6e6e6;
+    margin-bottom: 30px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.modalOverlay {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalContent {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    padding: 40px 32px 32px 32px;
+    min-width: 340px;
+    max-width: 95vw;
+    position: relative;
+    animation: modalShow 0.2s cubic-bezier(.4, 2, .6, 1) both;
+}
+
+@keyframes modalShow {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modalCloseBtn {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.15s;
+    line-height: 1;
+}
+
+.modalCloseBtn:hover {
+    color: #017dbe;
+}
+
+.modalTitle {
+    margin: 0 0 12px 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #222;
+    text-align: center;
+}
+
+.modalForm {
+    margin-top: 10px;
+}
+
+.modalFormLabel {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 16px;
+    color: #444;
+    text-align: left;
+    margin-top: 16px;
+}
+
+.modalFormInput {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+    background-color: #ebebeb88;
+    color: #000;
+}
+
+.modalFormBtn {
+    width: 100%;
+    background: #017dbe;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px 0 #e6e6e6;
+    margin-top: 8px;
+}
+
+.imagePreviewBtn {
+    background: #e0e5eb;
+    color: #1976d2;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    box-shadow: 0 1px 4px 0 #e6e6e6;
+    margin: 0 2px;
+}
+
+.imagePreviewBtn:hover {
+    background: #dbe7f7;
+    color: #125ea7;
+}
