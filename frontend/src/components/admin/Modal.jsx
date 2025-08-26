@@ -32,15 +32,30 @@ const Modal = ({ open, onClose, title, children, fields, onSubmit, submitLabel }
                                     >
                                         {field.label}
                                     </label>
-                                    <input
-                                        id={field.name}
-                                        name={field.name}
-                                        type={field.type}
-                                        value={field.value}
-                                        onChange={field.onChange}
-                                        className={product.modalFormInput}
-                                        autoFocus={field.autoFocus}
-                                    />
+                                    {field.type === 'select' ? (
+                                        <select
+                                            id={field.name}
+                                            name={field.name}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            className={product.modalFormInput}
+                                        >
+                                            <option value="">აირჩიეთ როლი</option>
+                                            {field.options && field.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </select>
+                                    ) : (
+                                        <input
+                                            id={field.name}
+                                            name={field.name}
+                                            type={field.type}
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                            className={product.modalFormInput}
+                                            autoFocus={field.autoFocus}
+                                        />
+                                    )}
                                 </React.Fragment>
                             ))}
                             <button

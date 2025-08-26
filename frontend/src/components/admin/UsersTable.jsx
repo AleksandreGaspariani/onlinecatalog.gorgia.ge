@@ -5,23 +5,8 @@ import Edit from './Edit'
 import DeleteModal from './DeleteModal'
 import '../../assets/css/AdminPage.module.css'
 import product from '../../assets/css/ProductPage.module.css'
-
-
-
-const columns = [
-    { header: '#', accessor: 'id' },
-    { header: 'სახელი', accessor: 'name' },
-    { header: 'კონტრაქტორის მისამართი', accessor: 'address' },
-    { header: 'კონტრაქტორის IBAN', accessor: 'contragentIBAN' },
-    { header: 'კონტრაქტორის TIN', accessor: 'contragentTIN' },
-    { header: 'კონტრაქტორის ტელეფონის ნომერი', accessor: 'phone' },
-    { header: 'კონტრაქტორის სახელი', accessor: 'contragentName' },
-    { header: 'კონტრაქტორის ელფოსტა', accessor: 'contragentEmail' },
-    { header: 'ელფოსტა', accessor: 'email' },
-    { header: 'პაროლი', accessor: 'password' },
-    { header: 'მოქმედებები', accessor: 'actions' },
-
-]
+import defaultInstance from '../../api/defaultInstance'
+import { useSelector } from 'react-redux'
 
 const Users = () => {
     const [open, setOpen] = useState(false)
@@ -39,11 +24,32 @@ const Users = () => {
     const [data, setData] = useState([])
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [rowToDelete, setRowToDelete] = useState(null)
+    const userRole = useSelector(state => state.user?.role);
 
     useEffect(() => {
-        fetch('/api/users')
-            .then(res => res.json())
-            .then(setData)
+        defaultInstance.get('/users', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => res.data)
+            .then(users => {
+                setData(users.map((user, idx) => ({
+                    id: user.id,
+                    name: user.name,
+                    address: user.profile?.contact_address || '',
+                    contragentIBAN: user.profile?.contact_iban || '',
+                    contragentTIN: user.profile?.contact_tin || '',
+                    phone: user.profile?.contact_phone || '',
+                    contragentName: user.profile?.contact_name || '',
+                    contragentEmail: user.profile?.contact_email || '',
+                    email: user.email,
+                    password: '********',
+                    role: user.role,
+                    actions: '',
+                })));
+            });
     }, [])
 
     const handleChange = e => {
@@ -51,8 +57,44 @@ const Users = () => {
     }
 
     const handleSubmit = e => {
-        e.preventDefault()
-        console.log(form)
+        e.preventDefault();
+        defaultInstance.post('/users', form, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                'Accept': 'application/json'
+            }
+        })
+            .then(res => {
+                setOpen(false);
+                setForm({ name: '', email: '', password: '', role: '' });
+                // Optionally refresh users
+                defaultInstance.get('/users', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(res => res.data)
+                    .then(users => {
+                        setData(users.map((user, idx) => ({
+                            id: user.id,
+                            name: user.name,
+                            address: user.profile?.contact_address || '',
+                            contragentIBAN: user.profile?.contact_iban || '',
+                            contragentTIN: user.profile?.contact_tin || '',
+                            phone: user.profile?.contact_phone || '',
+                            contragentName: user.profile?.contact_name || '',
+                            contragentEmail: user.profile?.contact_email || '',
+                            email: user.email,
+                            password: '********',
+                            role: user.role,
+                            actions: '',
+                        })));
+                    });
+            })
+            .catch(err => {
+                alert('Error: ' + (err.response?.data?.message || err.message));
+            });
     }
 
     const handleEdit = (user) => {
@@ -84,6 +126,21 @@ const Users = () => {
         setEditModalOpen(false)
     }
 
+    const getRoleOptions = () => {
+        if (userRole === 'admin') {
+            return [
+                { label: 'ოპერატორი', value: 'operator' },
+                { label: 'პრისეილერი', value: 'presailer' }
+            ];
+        }
+        if (userRole === 'presailer') {
+            return [
+                { label: 'კონტრაგენტი', value: 'contragent' }
+            ];
+        }
+        return [];
+    };
+
     const fields = [
         {
             label: 'Name',
@@ -105,6 +162,14 @@ const Users = () => {
             name: 'password',
             value: form.password,
             onChange: handleChange
+        },
+        {
+            label: 'Role',
+            type: 'select',
+            name: 'role',
+            value: form.role || '',
+            onChange: handleChange,
+            options: getRoleOptions()
         }
     ]
 
@@ -131,6 +196,23 @@ const Users = () => {
             onChange: handleEditChange
         }
     ]
+
+    const columns = [
+        { header: '#', accessor: 'id' },
+        { header: 'სახელი', accessor: 'name' },
+        { header: 'კონტრაქტორის მისამართი', accessor: 'address' },
+        { header: 'კონტრაქტორის IBAN', accessor: 'contragentIBAN' },
+        { header: 'კონტრაქტორის TIN', accessor: 'contragentTIN' },
+        { header: 'კონტრაქტორის ტელეფონის ნომერი', accessor: 'phone' },
+        { header: 'კონტრაქტორის სახელი', accessor: 'contragentName' },
+        { header: 'კონტრაქტორის ელფოსტა', accessor: 'contragentEmail' },
+        { header: 'ელფოსტა', accessor: 'email' },
+        { header: 'პაროლი', accessor: 'password' },
+        { header: 'როლი', accessor: 'role' },
+        ...(userRole === 'admin' || userRole === 'presailer'
+            ? [{ header: 'მოქმედებები', accessor: 'actions' }]
+            : [])
+    ];
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>

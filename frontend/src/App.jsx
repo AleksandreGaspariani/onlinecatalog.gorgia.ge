@@ -11,6 +11,7 @@ import Product from './pages/product/Product'
 import Breadcrumb from './components/Breadcrumb'
 import AdminPage from './components/admin/AdminPage'
 import Login from './components/Login'
+import axios from 'axios'
 
 function Layout() {
   const location = useLocation();
@@ -32,13 +33,48 @@ function Layout() {
 
 function App() {
   const token = localStorage.getItem('authToken');
+  const [profileChecked, setProfileChecked] = React.useState(false);
+  const [profileIncomplete, setProfileIncomplete] = React.useState(false);
+
+  React.useEffect(() => {
+    if (token) {
+      axios.get('/api/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      }).then(res => {
+        const profile = res.data;
+        if (!profile || Object.values(profile).some(v => !v)) {
+          setProfileIncomplete(true);
+        }
+        setProfileChecked(true);
+      }).catch(() => {
+        setProfileIncomplete(true);
+        setProfileChecked(true);
+      });
+    }
+  }, [token]);
+
+  if (!token) {
+    return (
+      <Provider store={store}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="*" element={<Login />} />
+          </Routes>
+        </BrowserRouter>
+      </Provider>
+    );
+  }
+
+  if (!profileChecked) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          {!token ? (
-            <Route path="*" element={<Login />} />
+          {profileIncomplete ? (
+            <Route path="*" element={<AdminPage />} />
           ) : (
             <>
               <Route path="/" element={<Layout />}>
@@ -47,13 +83,13 @@ function App() {
                 <Route path="category/:categoryName/product/:productName" element={<Product />} />
               </Route>
               <Route path="login" element={<Login />} />
-              <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/*" element={<AdminPage />} />
             </>
           )}
         </Routes>
       </BrowserRouter>
     </Provider>
-  )
+  );
 }
 
 export default App
