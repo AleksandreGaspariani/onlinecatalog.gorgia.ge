@@ -6,14 +6,16 @@ import DeleteModal from './DeleteModal'
 import '../../assets/css/AdminPage.module.css'
 import product from '../../assets/css/ProductPage.module.css'
 import defaultInstance from '../../api/defaultInstance'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { setUser } from '../../redux/userSlice'
 
 const Users = () => {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        role: ''
     })
     const [editModalOpen, setEditModalOpen] = useState(false)
     const [editForm, setEditForm] = useState({
@@ -25,8 +27,20 @@ const Users = () => {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [rowToDelete, setRowToDelete] = useState(null)
     const userRole = useSelector(state => state.user?.role);
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        if (!userRole) {
+            defaultInstance.get('/user', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Accept': 'application/json'
+                }
+            }).then(res => {
+                dispatch(setUser(res.data));
+            });
+        }
+
         defaultInstance.get('/users', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -50,7 +64,7 @@ const Users = () => {
                     actions: '',
                 })));
             });
-    }, [])
+    }, [userRole, dispatch])
 
     const handleChange = e => {
         setForm({ ...form, [e.target.name]: e.target.value })
@@ -67,7 +81,6 @@ const Users = () => {
             .then(res => {
                 setOpen(false);
                 setForm({ name: '', email: '', password: '', role: '' });
-                // Optionally refresh users
                 defaultInstance.get('/users', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -101,8 +114,10 @@ const Users = () => {
         setEditForm({
             name: user.name || '',
             email: user.email || '',
-            password: user.password || ''
+            password: '',
+            role: user.role || ''
         })
+        setRowToDelete(user);
         setEditModalOpen(true)
     }
     const handleDelete = (user) => {
@@ -110,20 +125,91 @@ const Users = () => {
         setDeleteModalOpen(true)
     }
 
-    const handleDeleteConfirm = () => {
-        alert('Deleted: ' + rowToDelete?.name)
-        setDeleteModalOpen(false)
-        setRowToDelete(null)
+    const handleDeleteConfirm = async () => {
+        if (!rowToDelete) return;
+        try {
+            await defaultInstance.delete(`/users/${rowToDelete.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Accept': 'application/json'
+                }
+            });
+            defaultInstance.get('/users', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Accept': 'application/json'
+                }
+            })
+                .then(res => res.data)
+                .then(users => {
+                    setData(users.map((user, idx) => ({
+                        id: user.id,
+                        name: user.name,
+                        address: user.profile?.contact_address || '',
+                        contragentIBAN: user.profile?.contact_iban || '',
+                        contragentTIN: user.profile?.contact_tin || '',
+                        phone: user.profile?.contact_phone || '',
+                        contragentName: user.profile?.contact_name || '',
+                        contragentEmail: user.profile?.contact_email || '',
+                        email: user.email,
+                        password: '********',
+                        role: user.role,
+                        actions: '',
+                    })));
+                });
+            setDeleteModalOpen(false);
+            setRowToDelete(null);
+        } catch (err) {
+            alert('Error deleting user: ' + (err.response?.data?.message || err.message));
+            setDeleteModalOpen(false);
+            setRowToDelete(null);
+        }
     }
 
     const handleEditChange = e => {
         setEditForm({ ...editForm, [e.target.name]: e.target.value })
     }
 
-    const handleEditSubmit = e => {
-        e.preventDefault()
-        alert('Edited user: ' + JSON.stringify(editForm))
-        setEditModalOpen(false)
+    const handleEditSubmit = async (e) => {
+        e.preventDefault();
+        if (!rowToDelete) return;
+        try {
+            await defaultInstance.put(`/users/${rowToDelete.id}`, editForm, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Accept': 'application/json'
+                }
+            });
+            defaultInstance.get('/users', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                    'Accept': 'application/json'
+                }
+            })
+                .then(res => res.data)
+                .then(users => {
+                    setData(users.map((user, idx) => ({
+                        id: user.id,
+                        name: user.name,
+                        address: user.profile?.contact_address || '',
+                        contragentIBAN: user.profile?.contact_iban || '',
+                        contragentTIN: user.profile?.contact_tin || '',
+                        phone: user.profile?.contact_phone || '',
+                        contragentName: user.profile?.contact_name || '',
+                        contragentEmail: user.profile?.contact_email || '',
+                        email: user.email,
+                        password: '********',
+                        role: user.role,
+                        actions: '',
+                    })));
+                });
+            setEditModalOpen(false);
+            setRowToDelete(null);
+        } catch (err) {
+            alert('Error editing user: ' + (err.response?.data?.message || err.message));
+            setEditModalOpen(false);
+            setRowToDelete(null);
+        }
     }
 
     const getRoleOptions = () => {
@@ -167,7 +253,7 @@ const Users = () => {
             label: 'Role',
             type: 'select',
             name: 'role',
-            value: form.role || '',
+            value: form.role,
             onChange: handleChange,
             options: getRoleOptions()
         }

@@ -102,7 +102,6 @@ const AdminPage = () => {
                     <Route path="orders" element={<Orders />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="users" element={<Users />} />
-                    {/* default tab */}
                     <Route index element={<CategoryTable />} />
                 </Routes>
             </main>

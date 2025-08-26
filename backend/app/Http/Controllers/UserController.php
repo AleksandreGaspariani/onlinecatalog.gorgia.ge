@@ -44,4 +44,42 @@ class UserController extends Controller
 
         return response()->json($newUser, 201);
     }
+
+    public function delete(Request $request, User $user)
+    {
+        $currentUser = $request->user();
+
+        if ($currentUser->role !== 'admin') {
+            return response()->json(['message' => 'You are not authorized to delete users'], 403);
+        }
+
+        $user->delete();
+
+        return response()->json(['message' => 'User deleted successfully']);
+    }
+
+    public function edit(Request $request, User $user)
+    {
+        $currentUser = $request->user();
+
+        if ($currentUser->role !== 'admin') {
+            return response()->json(['message' => 'You are not authorized to edit users'], 403);
+        }
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:6',
+            'role' => 'required|string|in:admin,operator,presailer,contragent',
+        ]);
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password ? Hash::make($request->password) : $user->password,
+            'role' => $request->role,
+        ]);
+
+        return response()->json($user);
+    }
 }
