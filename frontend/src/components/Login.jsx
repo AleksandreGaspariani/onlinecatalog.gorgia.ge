@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { setUser } from '../redux/userSlice';
 import styles from '../assets/css/Login.module.css';
 import logo from '../assets/images/logo.png';
 import defaultInstance from '../api/defaultInstance';

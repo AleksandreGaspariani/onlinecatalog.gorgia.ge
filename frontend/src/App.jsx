@@ -31,17 +31,25 @@ function Layout() {
 }
 
 function App() {
+  const token = localStorage.getItem('authToken');
+
   return (
     <Provider store={store}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="category/:categoryName" element={<Category />} />
-            <Route path="category/:categoryName/product/:productName" element={<Product />} />
-          </Route>
-          <Route path="login" element={<Login />} />
-          <Route path="/admin" element={<AdminPage />} />
+          {!token ? (
+            <Route path="*" element={<Login />} />
+          ) : (
+            <>
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="category/:categoryName" element={<Category />} />
+                <Route path="category/:categoryName/product/:productName" element={<Product />} />
+              </Route>
+              <Route path="login" element={<Login />} />
+              <Route path="/admin" element={<AdminPage />} />
+            </>
+          )}
         </Routes>
       </BrowserRouter>
     </Provider>
