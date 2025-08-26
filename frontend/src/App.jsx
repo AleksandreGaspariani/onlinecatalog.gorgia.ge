@@ -10,17 +10,19 @@ import Category from './pages/category/Category'
 import Product from './pages/product/Product'
 import Breadcrumb from './components/Breadcrumb'
 import AdminPage from './components/admin/AdminPage'
+import Login from './components/Login'
 
 function Layout() {
   const location = useLocation();
   const isDashboard = location.pathname === '/';
-  const hideFooter = location.pathname.startsWith('/admin');
+  const isLogin = location.pathname === '/login';
+  const hideFooter = location.pathname.startsWith('/admin') || isLogin;
 
   return (
     <div style={{ margin: '0 !important', width: '100% !important' }}>
-      <NavRoutes />
+      {!isLogin && <NavRoutes />}
       <div style={{ height: 'fit-content', marginTop: '10vh' }}>
-        {!isDashboard && <Breadcrumb />}
+        {!isDashboard && !isLogin && <Breadcrumb />}
         <Outlet />
       </div>
       {!hideFooter && <Footer />}
@@ -38,6 +40,7 @@ function App() {
             <Route path="category/:categoryName" element={<Category />} />
             <Route path="category/:categoryName/product/:productName" element={<Product />} />
           </Route>
+          <Route path="login" element={<Login />} />
           <Route path="/admin" element={<AdminPage />} />
         </Routes>
       </BrowserRouter>
