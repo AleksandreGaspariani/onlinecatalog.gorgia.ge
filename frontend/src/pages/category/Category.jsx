@@ -62,8 +62,8 @@ const Category = () => {
   return (
     <div style={{ maxWidth: '70%', margin: "40px auto 0 auto", padding: "0 16px" }}>
       <h2 className='category-title'>
-        კატალოგი <span style={{color: '#000'}}>/ {matchedCategory ? matchedCategory.name : categoryName}</span>
-      </h2> 
+        კატალოგი <span style={{ color: '#000' }}>/ {matchedCategory ? matchedCategory.name : categoryName}</span>
+      </h2>
       <div className="categoryItems-list">
         {paginatedProducts.map(product => (
           <div key={product.id} className='category-item'>

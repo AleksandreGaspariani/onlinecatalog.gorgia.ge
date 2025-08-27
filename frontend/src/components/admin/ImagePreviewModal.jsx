@@ -4,6 +4,8 @@ import product from '../../assets/css/ProductPage.module.css'
 import defaultInstance from '../../api/defaultInstance'
 import DeleteModal from './DeleteModal'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || '';
+
 const ImagePreviewModal = ({ open, onClose, image, onImageChange, imageId, onImageUpdated, onImageDeleted }) => {
     const [preview, setPreview] = useState(image)
     const [file, setFile] = useState(null)
@@ -64,7 +66,7 @@ const ImagePreviewModal = ({ open, onClose, image, onImageChange, imageId, onIma
         <div className={styles.modalOverlay}>
             <div className={styles.modalContent}>
                 <div className={styles.modalHeader}>
-                    <h2 className={styles.modalTitle}>სურათის დამატება</h2>
+                    <h2 className={styles.modalTitle}></h2>
                     <button
                         className={styles.modalCloseBtn}
                         onClick={onClose}
@@ -76,64 +78,13 @@ const ImagePreviewModal = ({ open, onClose, image, onImageChange, imageId, onIma
                 <div className={styles.modalBody} style={{ textAlign: 'center', marginTop: '2rem' }}>
                     {preview ? (
                         <img
-                            src={typeof preview === 'string' ? preview : URL.createObjectURL(preview)}
+                            src={`${API_BASE_URL}/${image}`}
                             alt="სურათის დამატება"
                             style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 8, marginBottom: 16 }}
                         />
                     ) : (
                         <div style={{ marginBottom: 16 }}>სურათი ვერ მოიძებნა</div>
                     )}
-                    {/* Стилизованный file input */}
-                    <div style={{ marginBottom: 16 }}>
-                        <label
-                            htmlFor="image-upload"
-                            style={{
-                                display: 'inline-block',
-                                border: '1px solid #1976d2',
-                                borderRadius: 4,
-                                padding: '6px 12px',
-                                background: '#fff',
-                                color: '#1976d2',
-                                cursor: 'pointer',
-                                marginRight: 8,
-                                minWidth: 120,
-                                textAlign: 'center'
-                            }}
-                        >
-                            Choose Files
-                        </label>
-                        <input
-                            id="image-upload"
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                        />
-                        <span style={{ color: '#555', fontSize: 15 }}>
-                            {file ? file.name : 'No file chosen'}
-                        </span>
-                    </div>
-                    <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginBottom: 8 }}>
-                        <button
-                            type="button"
-                            className={product.modalFormBtn}
-                            style={{ background: '#1976d2', color: '#fff' }}
-                            onClick={handleUpdate}
-                            disabled={!file || loading}
-                        >
-                            განახლება
-                        </button>
-                        <button
-                            type="button"
-                            className={product.modalFormBtn}
-                            style={{ background: '#d32f2f', color: '#fff' }}
-                            onClick={() => setDeleteModalOpen(true)}
-                            disabled={loading || !imageId}
-                        >
-                            წაშლა
-                        </button>
-                    </div>
                 </div>
             </div>
             {deleteModalOpen && (

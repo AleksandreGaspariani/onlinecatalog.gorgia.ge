@@ -1,6 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || '';
+
 // eslint-disable-next-line no-unused-vars
 const CategoryDisplay = ({ imageSrc, name, categoryId, slug }) => {
   const navigate = useNavigate();
@@ -31,8 +33,7 @@ const CategoryDisplay = ({ imageSrc, name, categoryId, slug }) => {
         }}
       >
         <img
-          src={imageSrc}
-          // alt={name}
+          src={`${API_BASE_URL}/${imageSrc}`}
           style={{
             width: '160px',
             height: '160px',

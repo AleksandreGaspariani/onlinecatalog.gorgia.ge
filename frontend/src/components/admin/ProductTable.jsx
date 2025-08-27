@@ -5,6 +5,7 @@ import Table from './Table'
 import Edit from './Edit'
 import DeleteModal from './DeleteModal'
 import ImagePreviewModal from './ImagePreviewModal'
+import { IoIosAdd } from "react-icons/io";
 
 const ProductTable = () => {
     const [modalOpen, setModalOpen] = useState(false)
@@ -147,11 +148,17 @@ const ProductTable = () => {
         <>
             <button
                 className={product.addProductBtn}
+            >
+                <IoIosAdd fontSize="20px" color='#fff' />
+                პროდუქტის დამატება
+            </button>
+            <button
+                className={product.addProductBtn}
                 onClick={() => setModalOpen(true)}
             >
+                <IoIosAdd fontSize="20px" color='#fff' />
                 პროდუქტის დამატება 1c დან
             </button>
-
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

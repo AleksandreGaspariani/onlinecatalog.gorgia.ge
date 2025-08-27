@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import product from '../../assets/css/ProductPage.module.css'
 import Table from './Table'
 import Edit from './Edit'
 import DeleteModal from './DeleteModal'
 import ImagePreviewModal from './ImagePreviewModal'
-
+import { IoIosAdd } from "react-icons/io";
+import defaultInstance from '../../api/defaultInstance'
 
 
 const CategoryTable = () => {
@@ -15,6 +16,24 @@ const CategoryTable = () => {
     const [imageModalOpen, setImageModalOpen] = useState(false)
     const [imageToPreview, setImageToPreview] = useState(null)
     const [imageIdToPreview, setImageIdToPreview] = useState(null)
+    const [addModalOpen, setAddModalOpen] = useState(false)
+    const [addForm, setAddForm] = useState({ name: '', image: '' })
+    const [categories, setCategories] = useState([])
+
+    useEffect(() => {
+        defaultInstance.get('/categories')
+            .then(res => {
+                setCategories(res.data.map(cat => ({
+                    id: cat.id,
+                    name: cat.name,
+                    attachment: cat.attachment,
+                    actions: ''
+                })))
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error)
+            })
+    }, [])
 
     const handleEdit = (row) => {
         setEditForm({ id: row.id, name: row.name, image: row.image })
@@ -26,58 +45,134 @@ const CategoryTable = () => {
     }
 
     const handleEditChange = e => {
-        setEditForm({ ...editForm, [e.target.name]: e.target.value })
+        if (e.target.type === 'file') {
+            setEditForm({ ...editForm, image: e.target.files[0] })
+        } else {
+            setEditForm({ ...editForm, [e.target.name]: e.target.value })
+        }
     }
 
-    const handleEditSubmit = e => {
+    const handleEditSubmit = async e => {
         e.preventDefault()
-        alert('Edited category: ' + JSON.stringify(editForm))
-        setModalOpen(false)
+        const formData = new FormData()
+        formData.append('name', editForm.name)
+        if (editForm.image) {
+            formData.append('image', editForm.image)
+        }
+
+        try {
+            await defaultInstance.post(`/categories/${editForm.id}?_method=PUT`, formData, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+            setCategories(categories.map(cat =>
+                cat.id === editForm.id ? { ...cat, name: editForm.name, attachment: editForm.image ? URL.createObjectURL(editForm.image) : cat.attachment } : cat
+            ))
+            setModalOpen(false)
+        } catch (error) {
+            console.error('Error updating category:', error)
+        }
     }
 
-    const handleDeleteConfirm = () => {
-        alert('Deleted: ' + rowToDelete?.name)
-        setDeleteModalOpen(false)
-        setRowToDelete(null)
+    const handleDeleteConfirm = async () => {
+        if (!rowToDelete) return;
+
+        try {
+            await defaultInstance.delete(`/categories/${rowToDelete.id}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                }
+            });
+            setCategories(categories.filter(cat => cat.id !== rowToDelete.id));
+            setDeleteModalOpen(false);
+            setRowToDelete(null);
+        } catch (error) {
+            console.error('Error deleting category:', error);
+        }
     }
 
-    const handleImagePreview = (img, row) => {
-        setImageToPreview(img)
+    const handleImagePreview = (imgUrl, row) => {
+        setImageToPreview(imgUrl)
         setImageIdToPreview(row.id)
         setImageModalOpen(true)
     }
+
+    const handleAddChange = e => {
+        if (e.target.type === 'file') {
+            setAddForm({ ...addForm, image: e.target.files[0] })
+        } else {
+            setAddForm({ ...addForm, [e.target.name]: e.target.value })
+        }
+    }
+
+    const handleAddSubmit = async e => {
+        e.preventDefault()
+        const formData = new FormData();
+        formData.append('name', addForm.name);
+        if (addForm.image) {
+            formData.append('image', addForm.image);
+        }
+
+        try {
+            await defaultInstance.post('/categories', formData, {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('token'),
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+
+            setAddModalOpen(false)
+            setAddForm({ name: '', image: '' })
+        } catch (error) {
+            console.error('Error:', error)
+            alert('Error: ' + (error.response?.data?.message || error.message))
+        }
+    }
+
+    const addFields = [
+        { label: 'დასახელება', type: 'text', name: 'name', value: addForm.name, onChange: handleAddChange },
+        { label: 'სურათი', type: 'file', name: 'image', onChange: handleAddChange }
+    ]
 
     const columns = [
         { header: '#', accessor: 'id' },
         { header: 'დასახელება', accessor: 'name' },
         {
             header: 'სურათები',
-            accessor: 'images',
+            accessor: 'attachment',
             cell: row => (
-                <button
-                    className={product.imagePreviewBtn}
-                    onClick={() => handleImagePreview(row.images, row)}
-                >
-                    ნახვა
-                </button>
+                row.attachment ? (
+                    <button
+                        className={product.imagePreviewBtn}
+                        onClick={() => handleImagePreview(row.attachment, row)}
+                    >
+                        ნახვა
+                    </button>
+                ) : '---'
             )
         },
         { header: 'მოქმედება', accessor: 'actions' }
     ]
 
-    const data = [
-        { id: 1, name: 'მაგალითი კატეგორია', image: 'img.jpg', actions: 'რედაქტირება | წაშლა' }
-    ]
-
     const editFields = [
         { label: 'დასახელება', type: 'text', name: 'name', value: editForm.name, onChange: handleEditChange },
+        { label: 'სურათი', type: 'file', name: 'image', onChange: handleEditChange }
     ]
 
     return (
         <>
+            <button
+                className={product.addProductBtn}
+                onClick={() => setAddModalOpen(true)}
+            >
+                <IoIosAdd fontSize="20px" color='#fff' />
+                კატეგორიის დამატება
+            </button>
             <Table
                 columns={columns}
-                data={data}
+                data={categories}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
@@ -88,6 +183,14 @@ const CategoryTable = () => {
                 fields={editFields}
                 onSubmit={handleEditSubmit}
                 submitLabel="შენახვა"
+            />
+            <Edit
+                open={addModalOpen}
+                onClose={() => setAddModalOpen(false)}
+                title="კატეგორიის დამატება"
+                fields={addFields}
+                onSubmit={handleAddSubmit}
+                submitLabel="დამატება"
             />
             <DeleteModal
                 open={deleteModalOpen}

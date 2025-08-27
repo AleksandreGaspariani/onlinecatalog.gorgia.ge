@@ -55,7 +55,7 @@ const HeaderModal = () => {
           onClick={handleSearchClick}
         />
         <button className="search-input-btn">
-          <GoSearch style={{ color: "#017dbe", height: "1.2rem", width: "1.2rem" }}/>
+          <GoSearch style={{ color: "#017dbe", height: "1.2rem", width: "1.2rem" }} />
         </button>
         {showDropdown && (
           <div
@@ -74,13 +74,16 @@ const HeaderModal = () => {
                     image={product.image}
                     name={product.name}
                     code={product.code}
-                    onClick={() => {/* handle product click */}}
+                    onClick={() => {/* handle product click */ }}
                   />
                 </div>
               ))}
             </div>
           </div>
         )}
+      </div>
+      <div>
+        {/* add */}
       </div>
     </div>
   )

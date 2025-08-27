@@ -32,7 +32,16 @@ const Modal = ({ open, onClose, title, children, fields, onSubmit, submitLabel }
                                     >
                                         {field.label}
                                     </label>
-                                    {field.type === 'select' ? (
+                                    {field.type === 'file' ? (
+                                        <input
+                                            id={field.name}
+                                            name={field.name}
+                                            type="file"
+                                            onChange={field.onChange}
+                                            className={product.modalFormInput}
+                                            autoFocus={field.autoFocus}
+                                        />
+                                    ) : field.type === 'select' ? (
                                         <select
                                             id={field.name}
                                             name={field.name}
