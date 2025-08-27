@@ -19,7 +19,8 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
     padding: 40px 32px 32px 32px;
     min-width: 340px;
-    max-width: 95vw;
+    max-height: 80vh;
+    overflow-y: auto;
     position: relative;
     animation: modalShow 0.2s cubic-bezier(.4, 2, .6, 1) both;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import product from '../../assets/css/ProductPage.module.css'
 import Modal from './Modal'
 import Table from './Table'
@@ -6,9 +6,11 @@ import Edit from './Edit'
 import DeleteModal from './DeleteModal'
 import ImagePreviewModal from './ImagePreviewModal'
 import { IoIosAdd } from "react-icons/io";
+import defaultInstance from '../../api/defaultInstance'
 
 const ProductTable = () => {
     const [modalOpen, setModalOpen] = useState(false)
+    const [modal1cOpen, setModal1cOpen] = useState(false)
     const [productCode, setProductCode] = useState('')
     const [editModalOpen, setEditModalOpen] = useState(false)
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -16,6 +18,18 @@ const ProductTable = () => {
     const [imageModalOpen, setImageModalOpen] = useState(false)
     const [imageToPreview, setImageToPreview] = useState(null)
     const [imageIdToPreview, setImageIdToPreview] = useState(null)
+    const [products, setProducts] = useState([]) // initialize as empty array
+
+    useEffect(() => {
+        defaultInstance.get('/products')
+            .then(res => {
+                setProducts(res.data)
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error)
+            })
+    }, [])
+
     const [editForm, setEditForm] = useState({
         numerologicalName: '',
         price: '',
@@ -29,9 +43,62 @@ const ProductTable = () => {
         images: ''
     })
 
-    const handleProductSubmit = e => {
+    const [productForm, setProductForm] = useState({
+        productCode: '',
+        numerologicalName: '',
+        price: '',
+        bmCode: '',
+        article: '',
+        barcode: '',
+        size: '',
+        packageCount: '',
+        manufacturer: '',
+        annotation: '',
+        image: ''
+    })
+
+    const handleProductSubmit = async e => {
         e.preventDefault()
-        console.log({ productCode })
+
+        const formData = new FormData()
+        Object.entries(productForm).forEach(([key, value]) => {
+            if (key === 'image' && value) {
+                formData.append('image', value)
+            } else if (key !== 'image') {
+                formData.append(key, value)
+            }
+        })
+
+
+        try {
+            const response = await defaultInstance.post('/products', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            })
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok')
+            }
+
+            const data = await response.json()
+            console.log('Product added:', data)
+        } catch (error) {
+            console.error('Error adding product:', error)
+        }
+
+        setModalOpen(false)
+        setProductForm({
+            productCode: '',
+            numerologicalName: '',
+            price: '',
+            bmCode: '',
+            article: '',
+            barcode: '',
+            size: '',
+            packageCount: '',
+            manufacturer: '',
+            annotation: '',
+            image: null
+        })
     }
 
     const handleEdit = (row) => {
@@ -90,11 +157,11 @@ const ProductTable = () => {
         { header: 'ანოტაცია', accessor: 'annotation' },
         {
             header: 'სურათები',
-            accessor: 'images',
+            accessor: 'image',
             cell: row => (
                 <button
                     className={product.imagePreviewBtn}
-                    onClick={() => handleImagePreview(row.images, row)}
+                    onClick={() => handleImagePreview(row.image, row)}
                 >
                     ნახვა
                 </button>
@@ -103,25 +170,29 @@ const ProductTable = () => {
         { header: 'ქმედებები', accessor: 'actions' }
     ]
 
-    const data = [
-        {
-            id: 1,
-            category: 'მაგალითი',
-            numerologicalName: 'სახელი',
-            price: '100₾',
-            bmCode: 'BM-000000',
-            article: '12345',
-            barcode: '20099999891215asdasdasdasdsad',
-            size: '1x1',
-            packageCount: 10,
-            manufacturer: 'მწარმოებელი',
-            annotation: 'ანოტაცია',
-            images: 'img.jpg',
-            actions: 'რედაქტირება | წაშლა'
-        }
-    ]
+    const productFields = columns
+        .filter(col => col.accessor !== 'actions' && col.accessor !== 'id' && col.accessor !== 'images')
+        .map(col => ({
+            label: col.header,
+            type: col.accessor === 'images' ? 'file' : 'text',
+            name: col.accessor,
+            value: productForm[col.accessor],
+            onChange: e => setProductForm({
+                ...productForm,
+                [col.accessor]: e.target.value
+            })
+        }));
 
-    const productFields = [
+
+    productFields.push({
+        label: 'სურათები',
+        type: 'file',
+        name: 'image',
+        value: undefined,
+        onChange: e => setProductForm({ ...productForm, image: e.target.files[0] })
+    })
+
+    const product1cFields = [
         {
             label: 'პროდუქტის კოდი',
             type: 'text',
@@ -148,13 +219,14 @@ const ProductTable = () => {
         <>
             <button
                 className={product.addProductBtn}
+                onClick={() => setModalOpen(true)}
             >
                 <IoIosAdd fontSize="20px" color='#fff' />
                 პროდუქტის დამატება
             </button>
             <button
                 className={product.addProductBtn}
-                onClick={() => setModalOpen(true)}
+                onClick={() => setModal1cOpen(true)}
             >
                 <IoIosAdd fontSize="20px" color='#fff' />
                 პროდუქტის დამატება 1c დან
@@ -167,10 +239,17 @@ const ProductTable = () => {
                 onSubmit={handleProductSubmit}
                 submitLabel="დამატება"
             />
-
+            <Modal
+                open={modal1cOpen}
+                onClose={() => setModal1cOpen(false)}
+                title="პროდუქტის დამატება 1c დან"
+                fields={product1cFields}
+                onSubmit={handleProductSubmit}
+                submitLabel="დამატება"
+            />
             <Table
                 columns={columns}
-                data={data}
+                data={Array.isArray(products) ? products : []}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
             />
