@@ -72,7 +72,7 @@ const Product = () => {
       ]));
     }
   }, [dispatch, productName, categoryName, categorySlug, matchedCategory, matchedProduct, productSlug, productNameState]);
-  
+
   return (
     <div className="product-root">
       {/* Row: Images (left) and Info (right) */}
@@ -161,7 +161,7 @@ const Product = () => {
               <p>რაოდენობა შეფუთვაში: 6 </p>
               <p>მწარმოებელი ქვეყანა: თურქეთი </p>
             </div>
-            <button style={{  backgroundColor: '#017dbe', borderRadius: '10px', padding: '10px 20px', cursor: 'pointer', outline: 'none' }}>
+            <button style={{ backgroundColor: '#017dbe', borderRadius: '10px', padding: '10px 20px', cursor: 'pointer', outline: 'none' }}>
               <span style={{ color: '#fff', fontWeight: 'bold' }}>შეკვეთა</span>
             </button>
           </div>
@@ -187,9 +187,9 @@ const Product = () => {
         </div>
       </div>
 
-        <div style={{ marginTop: '10vh', width: '100%', marginBottom: '10vh' }}>
-            <CarouselModal />
-        </div>
+      <div style={{ marginTop: '10vh', width: '100%', marginBottom: '10vh' }}>
+        <CarouselModal />
+      </div>
     </div>
   );
 };

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('category', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->unsignedInteger('group_id')->nullable();
             $table->string('name');
             $table->string('attachment')->nullable();

@@ -18,7 +18,8 @@ const ProductTable = () => {
     const [imageModalOpen, setImageModalOpen] = useState(false)
     const [imageToPreview, setImageToPreview] = useState(null)
     const [imageIdToPreview, setImageIdToPreview] = useState(null)
-    const [products, setProducts] = useState([]) // initialize as empty array
+    const [products, setProducts] = useState([])
+    const [categories, setCategories] = useState([])
 
     useEffect(() => {
         defaultInstance.get('/products')
@@ -30,7 +31,16 @@ const ProductTable = () => {
             })
     }, [])
 
+    useEffect(() => {
+        defaultInstance.get('/categories')
+            .then(res => setCategories(res.data))
+            .catch(error => {
+                console.error('Error fetching categories:', error)
+            })
+    }, [])
+
     const [editForm, setEditForm] = useState({
+        category: '',
         numerologicalName: '',
         price: '',
         bmCode: '',
@@ -44,6 +54,7 @@ const ProductTable = () => {
     })
 
     const [productForm, setProductForm] = useState({
+        category_id: '',
         productCode: '',
         numerologicalName: '',
         price: '',
@@ -103,6 +114,8 @@ const ProductTable = () => {
 
     const handleEdit = (row) => {
         setEditForm({
+            id: row.id || '',
+            category: row.category || '',
             numerologicalName: row.numerologicalName || '',
             price: row.price || '',
             bmCode: row.bmCode || '',
@@ -121,20 +134,38 @@ const ProductTable = () => {
         setDeleteModalOpen(true)
     }
 
-    const handleDeleteConfirm = () => {
-        alert('Deleted: ' + rowToDelete?.numerologicalName)
-        setDeleteModalOpen(false)
-        setRowToDelete(null)
+    const handleDeleteConfirm = async () => {
+        if (!rowToDelete) return;
+
+        try {
+            await defaultInstance.delete(`/products/${rowToDelete.id}`)
+            setProducts(products.filter(p => p.id !== rowToDelete.id))
+            setDeleteModalOpen(false)
+            setRowToDelete(null)
+        } catch (error) {
+            console.error('Error deleting product:', error)
+        }
+
     }
 
     const handleEditChange = e => {
         setEditForm({ ...editForm, [e.target.name]: e.target.value })
     }
 
-    const handleEditSubmit = e => {
+    const handleEditSubmit = async e => {
         e.preventDefault()
-        alert('Edited product: ' + JSON.stringify(editForm))
-        setEditModalOpen(false)
+
+        try {
+            await defaultInstance.put(`/products/${editForm.id}`, editForm)
+            const updatedProducts = products.map(p =>
+                p.id === editForm.id ? { ...p, ...editForm } : p
+            )
+            setProducts(updatedProducts)
+            setEditModalOpen(false)
+        } catch (error) {
+            console.error('Error updating product:', error)
+        }
+
     }
 
     const handleImagePreview = (img, row) => {
@@ -147,7 +178,7 @@ const ProductTable = () => {
         { header: '#', accessor: 'id' },
         { header: 'კატეგორია', accessor: 'category' },
         { header: 'ნუმეროლოგიური სახელი', accessor: 'numerologicalName' },
-        { header: 'ღირებულება', accessor: 'price' },
+        { header: 'ღირებულება', accessor: 'price', cell: row => `${row.price} ₾` },
         { header: 'BM კოდი', accessor: 'bmCode' },
         { header: 'არტიკული', accessor: 'article' },
         { header: 'შტრიხკოდი', accessor: 'barcode' },
@@ -170,18 +201,92 @@ const ProductTable = () => {
         { header: 'ქმედებები', accessor: 'actions' }
     ]
 
-    const productFields = columns
-        .filter(col => col.accessor !== 'actions' && col.accessor !== 'id' && col.accessor !== 'images')
-        .map(col => ({
-            label: col.header,
-            type: col.accessor === 'images' ? 'file' : 'text',
-            name: col.accessor,
-            value: productForm[col.accessor],
-            onChange: e => setProductForm({
-                ...productForm,
-                [col.accessor]: e.target.value
-            })
-        }));
+    const handleCategoryChange = e => {
+        const selectedId = e.target.value
+        const selectedCategory = categories.find(cat => cat.id === parseInt(selectedId))
+        setProductForm({
+            ...productForm,
+            category_id: selectedId,
+            category: selectedCategory ? selectedCategory.name : ''
+        })
+    }
+
+    const productFields = [
+        {
+            label: 'კატეგორია',
+            type: 'select',
+            name: 'category_id',
+            value: productForm.category_id,
+            onChange: handleCategoryChange,
+            options: categories.map(cat => ({
+                value: cat.id,
+                label: cat.name
+            }))
+        },
+        {
+            label: 'ნუმეროლოგიური სახელი',
+            type: 'text',
+            name: 'numerologicalName',
+            value: productForm.numerologicalName,
+            onChange: e => setProductForm({ ...productForm, numerologicalName: e.target.value })
+        },
+        {
+            label: 'ღირებულება',
+            type: 'text',
+            name: 'price',
+            value: productForm.price,
+            onChange: e => setProductForm({ ...productForm, price: e.target.value })
+        },
+        {
+            label: 'BM კოდი',
+            type: 'text',
+            name: 'bmCode',
+            value: productForm.bmCode,
+            onChange: e => setProductForm({ ...productForm, bmCode: e.target.value })
+        },
+        {
+            label: 'არტიკული',
+            type: 'text',
+            name: 'article',
+            value: productForm.article,
+            onChange: e => setProductForm({ ...productForm, article: e.target.value })
+        },
+        {
+            label: 'შტრიხკოდი',
+            type: 'text',
+            name: 'barcode',
+            value: productForm.barcode,
+            onChange: e => setProductForm({ ...productForm, barcode: e.target.value })
+        },
+        {
+            label: 'ზომა',
+            type: 'text',
+            name: 'size',
+            value: productForm.size,
+            onChange: e => setProductForm({ ...productForm, size: e.target.value })
+        },
+        {
+            label: 'პაკეტის რაოდენობა',
+            type: 'text',
+            name: 'packageCount',
+            value: productForm.packageCount,
+            onChange: e => setProductForm({ ...productForm, packageCount: e.target.value })
+        },
+        {
+            label: 'მწარმოებელი',
+            type: 'text',
+            name: 'manufacturer',
+            value: productForm.manufacturer,
+            onChange: e => setProductForm({ ...productForm, manufacturer: e.target.value })
+        },
+        {
+            label: 'ანოტაცია',
+            type: 'text',
+            name: 'annotation',
+            value: productForm.annotation,
+            onChange: e => setProductForm({ ...productForm, annotation: e.target.value })
+        }
+    ]
 
 
     productFields.push({
@@ -204,6 +309,7 @@ const ProductTable = () => {
     ]
 
     const editFields = [
+        { label: 'კატეგორია', type: 'text', name: 'category', value: editForm.category, onChange: handleEditChange },
         { label: 'ნუმეროლოგიური სახელი', type: 'text', name: 'numerologicalName', value: editForm.numerologicalName, onChange: handleEditChange },
         { label: 'ღირებულება', type: 'text', name: 'price', value: editForm.price, onChange: handleEditChange },
         { label: 'BM კოდი', type: 'text', name: 'bmCode', value: editForm.bmCode, onChange: handleEditChange },

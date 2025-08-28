@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Slider from 'react-slick'
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
@@ -12,6 +12,7 @@ import ItemCard from './ItemCard';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { slugify } from '../utils/slugify.js';
+import defaultInstance from '../api/defaultInstance.js'
 
 const popularProducts = [
   { id: 1, name: "Product 1", image: BedroomPng },
@@ -30,13 +31,21 @@ const CarouselModal = () => {
   const popularCategory = categories.find(cat => cat.name === 'პოპულარული პროდუქტები');
   const allCategory = categories.find(cat => cat.name === 'ყველა');
 
+  const [popularProducts, setPopularProducts] = useState([]);
+
+  useEffect(() => {
+    defaultInstance.get('/products')
+      .then(res => setPopularProducts(res.data))
+      .catch(err => console.error('Error fetching products:', err));
+  }, [])
+
   const settings = {
     dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 4,
     slidesToScroll: 4,
-    arrows: true, 
+    arrows: true,
     responsive: [
       {
         breakpoint: 1024,
@@ -67,7 +76,7 @@ const CarouselModal = () => {
         <Slider {...settings}>
           {popularProducts.map(product => (
             <div key={product.id} className='carousel-item'>
-              <ItemCard product={product} category={popularCategory}/>
+              <ItemCard product={product} category={popularCategory} />
             </div>
           ))}
         </Slider>

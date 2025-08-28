@@ -3,6 +3,7 @@ import '../assets/css/ItemCard.css';
 import { useNavigate } from 'react-router-dom'
 import { slugify } from '../utils/slugify.js';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || '';
 
 const ItemCard = ({ product, category }) => {
 
@@ -15,8 +16,14 @@ const ItemCard = ({ product, category }) => {
 
   return (
     <div className="carousel-card">
-      <img src={product.image} alt={product.name} className="carousel-img" />
-      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '8px'}}>
+
+      <img
+        src={product.image ? `${API_BASE_URL}/${product.image}` : '/default-image.png'}
+        alt={product.name}
+        className="carousel-img"
+      />
+
+      <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginLeft: '8px' }}>
         <p className="carousel-name">{product.name}</p>
         <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: '100%' }}>
           <button className="carousel-seemore-btn" onClick={handleClick}>ნახეთ მეტი</button>

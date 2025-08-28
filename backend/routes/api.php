@@ -24,8 +24,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // User management routes
     Route::get('/users', [UserController::class, 'index']);
     Route::post('/users', [UserController::class, 'store']);
-    Route::delete('/users/{user}', [UserController::class, 'delete']);
-    Route::put('/users/{user}', [UserController::class, 'edit']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
 
     // Category management routes
     Route::post('/categories', [CategoryController::class, 'store']);
@@ -36,4 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Product management routes
     Route::post('/products', [ProductsController::class, 'store']);
     Route::get('/products', [ProductsController::class, 'index']);
+    Route::put('/products/{product}', [ProductsController::class, 'update']);
+    Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
 });

@@ -45,7 +45,7 @@ class UserController extends Controller
         return response()->json($newUser, 201);
     }
 
-    public function delete(Request $request, User $user)
+    public function destroy(Request $request, User $user)
     {
         $currentUser = $request->user();
 
@@ -58,7 +58,7 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted successfully']);
     }
 
-    public function edit(Request $request, User $user)
+    public function update(Request $request, User $user)
     {
         $currentUser = $request->user();
 

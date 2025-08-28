@@ -14,21 +14,7 @@ import { setCategoryInfo } from '../../redux/categorySlice'
 import { slugify } from '../../utils/slugify.js'
 
 const products = [
-  { id: 1, name: "საწოლი", image: BedroomPng },
-  { id: 2, name: "მისაღები სავარძელი", image: LivingRoomPng },
-  { id: 3, name: "Product 3", image: BathroomPng },
-  { id: 4, name: "Product 4", image: DecorationPng },
-  { id: 5, name: "Product 5", image: OfficePng },
-  { id: 6, name: "Product 6", image: BedroomPng },
-  { id: 7, name: "Product 7", image: LivingRoomPng },
-  { id: 8, name: "Product 8", image: BathroomPng },
-  { id: 9, name: "Product 9", image: DecorationPng },
-  { id: 10, name: "Product 10", image: OfficePng },
-  { id: 11, name: "Product 11", image: BedroomPng },
-  { id: 12, name: "Product 12", image: LivingRoomPng },
-  { id: 13, name: "Product 13", image: BathroomPng },
-  { id: 14, name: "Product 14", image: DecorationPng },
-  { id: 15, name: "Product 15", image: OfficePng }
+
 ];
 
 const ITEMS_PER_PAGE = 8;

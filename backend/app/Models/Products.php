@@ -10,6 +10,7 @@ class Products extends Model
     use HasFactory;
 
     protected $fillable = [
+        'category_id',
         'category',
         'numerologicalName',
         'price',
@@ -22,4 +23,9 @@ class Products extends Model
         'annotation',
         'image',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }
