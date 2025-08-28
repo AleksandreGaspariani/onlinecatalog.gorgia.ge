@@ -10,7 +10,7 @@ const ItemCard = ({ product, category }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/category/${slugify(category.name)}/product/${slugify(product.name)}`);
+    navigate(`/category/${slugify(category.name)}/product/${product.id}`);
     window.scrollTo(0, 0);
   };
 

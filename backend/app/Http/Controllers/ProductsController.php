@@ -102,4 +102,10 @@ class ProductsController extends Controller
         $product->delete();
         return response()->json(null, 204);
     }
+
+    public function show($id)
+    {
+        $product = Products::findOrFail($id);
+        return response()->json($product);
+    }
 }

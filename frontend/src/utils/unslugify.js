@@ -9,7 +9,7 @@ function transliterateLatinToGeorgian(latinText) {
   };
 
   const vowels = ['a', 'e', 'i', 'o', 'u'];
-  const digraphs = ['gh', 'sh', 'ch', 'ts', 'dz', 'zh', 'kh', 'w']; 
+  const digraphs = ['gh', 'sh', 'ch', 'ts', 'dz', 'zh', 'kh', 'w'];
   let result = '';
   let i = 0;
 
@@ -17,7 +17,7 @@ function transliterateLatinToGeorgian(latinText) {
 
   while (i < latinText.length) {
     let matched = false;
-    
+
     for (let digraph of digraphs) {
       if (latinText.substr(i, digraph.length) === digraph) {
         result += reverseMap[digraph];
@@ -44,8 +44,9 @@ function transliterateLatinToGeorgian(latinText) {
   return result;
 }
 
-export const unslugify = (slug) => {
-  const noDashes = slug.replace(/-/g, '');
+export function unslugify(slug) {
+  if (typeof slug !== 'string') return '';
+  const noDashes = slug.replace(/-/g, ' ');
   return transliterateLatinToGeorgian(noDashes);
 };
 

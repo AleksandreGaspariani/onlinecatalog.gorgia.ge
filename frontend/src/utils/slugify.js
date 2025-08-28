@@ -1,6 +1,7 @@
 import React from 'react'
 
 function transliterateGeorgianToLatin(georgianText) {
+  if (typeof georgianText !== 'string') return '';
   const map = {
     'ა': 'a', 'ბ': 'b', 'გ': 'g', 'დ': 'd', 'ე': 'e',
     'ვ': 'v', 'ზ': 'z', 'თ': 't', 'ი': 'i', 'კ': 'k',
@@ -21,9 +22,9 @@ export const slugify = (text) => {
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\s+/g, '-') 
-    .replace(/[^\w-]+/g, '') 
-    .replace(/--+/g, '-') 
-    .replace(/^-+/, '') 
-    .replace(/-+$/, ''); 
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
 }

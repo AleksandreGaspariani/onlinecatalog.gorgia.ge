@@ -14,17 +14,6 @@ import { useSelector } from 'react-redux';
 import { slugify } from '../utils/slugify.js';
 import defaultInstance from '../api/defaultInstance.js'
 
-const popularProducts = [
-  { id: 1, name: "Product 1", image: BedroomPng },
-  { id: 2, name: "Product 2", image: LivingRoomPng },
-  { id: 3, name: "Product 3", image: BathroomPng },
-  { id: 4, name: "Product 4", image: DecorationPng },
-  { id: 5, name: "Product 5", image: OfficePng },
-  { id: 6, name: "Product 6", image: BedroomPng },
-  { id: 7, name: "Product 7", image: LivingRoomPng },
-  { id: 8, name: "Product 8", image: BathroomPng }
-];
-
 const CarouselModal = () => {
   const navigate = useNavigate();
   const categories = useSelector(state => state.category.categories);

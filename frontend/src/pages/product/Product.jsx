@@ -9,8 +9,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setBreadcrumbs } from '../../redux/breadcrumbSlice'
 import { useParams } from 'react-router-dom'
 import { slugify } from '../../utils/slugify.js';
+import defaultInstance from '../../api/defaultInstance.js';
 
-// Add more images for demonstration
 const productImages = [
   chairImg,
   LivingRoomPng,
@@ -27,6 +27,7 @@ const Product = () => {
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
   const [imagesSectionHeight, setImagesSectionHeight] = useState('auto');
   const [productNameState, setProductName] = useState('');
+  const [productData, setProductData] = useState(null);
   const categories = useSelector(state => state.category.categories);
 
 
@@ -34,12 +35,10 @@ const Product = () => {
   const matchedCategory = categories.find(cat => slugify(cat.name) === categorySlug);
   const productSlug = slugify(productNameState);
 
-  // Prevent error if matchedCategory is undefined or does not have products
   const matchedProduct = matchedCategory && matchedCategory.products
-    ? matchedCategory.products.find(product => slugify(product.name) === productSlug)
+    ? matchedCategory.products.find(product => slugify(product.numerologicalName) === productSlug)
     : null;
 
-  const annotationText = `The simple and elegant shape makes it very suitable for those for you who like those of you who wants a minimalist room. This chair is designed to blend seamlessly with modern interiors, offering both comfort and style for your living space. Its sturdy construction ensures durability while maintaining a lightweight profile for easy movement.`;
 
   const [showFullDesc, setShowFullDesc] = useState(false);
 
@@ -49,18 +48,29 @@ const Product = () => {
     return words.slice(0, wordLimit).join(' ') + '...';
   };
 
-  // Set productName from the UI after mount
   useEffect(() => {
-    if (titleRef.current) {
-      setProductName(titleRef.current.textContent);
+    if (productName) {
+      defaultInstance.get(`/products/${productName}`)
+        .then(res => {
+          setProductData(res.data);
+        })
+        .catch(error => {
+          console.log(error);
+          setProductData(null);
+        });
+    }
+  }, [productName]);
+
+  useEffect(() => {
+    if (titleRef.current && productData) {
+      setProductName(productData.numerologicalName);
       setDescMaxWidth(titleRef.current.offsetWidth + 'px');
     }
     if (infoRef.current) {
       setImagesSectionHeight(infoRef.current.offsetHeight + 'px');
     }
-  }, []);
+  }, [productData]);
 
-  // Update breadcrumbs when productName is set
   useEffect(() => {
     if (productName) {
       dispatch(setBreadcrumbs([
@@ -75,9 +85,7 @@ const Product = () => {
 
   return (
     <div className="product-root">
-      {/* Row: Images (left) and Info (right) */}
       <div className="product-row">
-        {/* Images Section */}
         <div
           className="product-images-section"
           style={{
@@ -119,12 +127,13 @@ const Product = () => {
           />
         </div>
 
-        {/* Product Info Section */}
         <div className="product-info-section" ref={infoRef}>
-          <h2 className="product-title" ref={titleRef}>მისაღები ოთახის სკამი</h2>
+          <h2 className="product-title" ref={titleRef}>
+            {productData ? productData.numerologicalName : ''}
+          </h2>
           <div className="product-description">
             <br />
-            <p>კოდი: <span style={{ fontWeight: 'bold' }}>BM-00182057</span></p>
+            <p>კოდი: <span style={{ fontWeight: 'bold' }}>{productData ? productData.bmCode : ''}</span></p>
             <div>
               <p>ანოტაცია:</p>
               <br />
@@ -141,7 +150,9 @@ const Product = () => {
                     fontSize: '0.95rem',
                   }}
                 >
-                  {showFullDesc ? annotationText : getTruncatedText(annotationText, 22)}
+                  {showFullDesc
+                    ? (productData ? productData.annotation : '')
+                    : getTruncatedText(productData ? productData.annotation : '', 22)}
                 </span>
                 <span
                   style={{
@@ -158,8 +169,8 @@ const Product = () => {
               </div>
             </div>
             <div>
-              <p>რაოდენობა შეფუთვაში: 6 </p>
-              <p>მწარმოებელი ქვეყანა: თურქეთი </p>
+              <p>რაოდენობა შეფუთვაში: {productData ? productData.packageCount : ''} </p>
+              <p>მწარმოებელი ქვეყანა: {productData ? productData.manufacturer : ''} </p>
             </div>
             <button style={{ backgroundColor: '#017dbe', borderRadius: '10px', padding: '10px 20px', cursor: 'pointer', outline: 'none' }}>
               <span style={{ color: '#fff', fontWeight: 'bold' }}>შეკვეთა</span>
@@ -168,21 +179,20 @@ const Product = () => {
         </div>
       </div>
 
-      {/* Product Details Section Below */}
       <div className="product-details">
         <h3 className="product-details-title">მახასიათებლები: </h3>
         <div className="product-details-content">
           {/* First column */}
           <div className="product-details-col">
-            <p>დასახელება: მისალის ოთახის სკამი </p>
-            <p>არტიქული: ....................... </p>
-            <p>შტრიხკოდი: .......................</p>
+            <p>დასახელება: {productData ? productData.numerologicalName : ''} </p>
+            <p>არტიქული: {productData ? productData.article : '.......................'} </p>
+            <p>შტრიხკოდი: {productData ? productData.barcode : '.......................'}</p>
           </div>
           {/* Second column */}
           <div className="product-details-col">
-            <p>სიგრძე: 0.5 მ</p>
-            <p>სიგანე: 0.57 მ</p>
-            <p>სიმაღლე: 0.87 მ</p>
+            <p>სიგრძე: {productData && productData.length ? productData.length + ' მ' : '0.5 მ'}</p>
+            <p>სიგანე: {productData && productData.width ? productData.width + ' მ' : '0.57 მ'}</p>
+            <p>სიმაღლე: {productData && productData.height ? productData.height + ' მ' : '0.87 მ'}</p>
           </div>
         </div>
       </div>

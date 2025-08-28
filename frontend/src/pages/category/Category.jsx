@@ -2,27 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import '../../assets/css/Category.css'
-import BedroomPng from '../../assets/images/bedroom.png'
-import LivingRoomPng from '../../assets/images/livingRoom.png'
-import BathroomPng from '../../assets/images/bathroom.png'
-import DecorationPng from '../../assets/images/decorations.png'
-import OfficePng from '../../assets/images/office.png'
 import ItemCard from '../../components/ItemCard.jsx';
 import Pagination from '../../components/Pagination.jsx';
 import { setBreadcrumbs } from '../../redux/breadcrumbSlice'
 import { setCategoryInfo } from '../../redux/categorySlice'
 import { slugify } from '../../utils/slugify.js'
-
-const products = [
-
-];
+import defaultInstance from '../../api/defaultInstance.js';
 
 const ITEMS_PER_PAGE = 8;
 
-
-
 const Category = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [products, setProducts] = useState([]);
   const { categoryName } = useParams();
   const dispatch = useDispatch()
   const categories = useSelector(state => state.category.categories)
@@ -32,6 +23,17 @@ const Category = () => {
   const categoryId = matchedCategory ? matchedCategory.id : null
 
   useEffect(() => {
+    if (categoryId) {
+      defaultInstance.get('/products')
+        .then(res => {
+          const filteredProducts = res.data.filter(product => product.category_id === categoryId);
+          setProducts(filteredProducts);
+        })
+        .catch(error => {
+          console.error('Error fetching products:', error);
+        });
+    }
+
     dispatch(setBreadcrumbs([
       { label: 'Dashboard', path: '/' },
       { label: matchedCategory ? matchedCategory.name : categoryName, path: `/category/${categorySlug}` }

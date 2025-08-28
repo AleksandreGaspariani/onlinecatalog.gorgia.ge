@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Product management routes
     Route::post('/products', [ProductsController::class, 'store']);
+    Route::get('/products/{product}', [ProductsController::class, 'show']);
     Route::get('/products', [ProductsController::class, 'index']);
     Route::put('/products/{product}', [ProductsController::class, 'update']);
     Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
