@@ -1,26 +1,18 @@
 import React, { useRef, useEffect, useState } from 'react';
 import CarouselModal from '../../components/CarouselModal';
-import chairImg from '../../assets/images/office.png';
 import '../../assets/css/Product.css';
-import LivingRoomPng from '../../assets/images/livingRoom.png'
-import BathroomPng from '../../assets/images/bathroom.png'
-import DecorationPng from '../../assets/images/decorations.png'
 import { useDispatch, useSelector } from 'react-redux'
 import { setBreadcrumbs } from '../../redux/breadcrumbSlice'
 import { useParams } from 'react-router-dom'
 import { slugify } from '../../utils/slugify.js';
 import defaultInstance from '../../api/defaultInstance.js';
 
-const productImages = [
-  chairImg,
-  LivingRoomPng,
-  BathroomPng,
-  DecorationPng
-];
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || '';
+
 
 const Product = () => {
   const dispatch = useDispatch();
-  const { categoryName, productName } = useParams();
+  const { categoryName, productId } = useParams();
   const titleRef = useRef(null);
   const infoRef = useRef(null);
   const [descMaxWidth, setDescMaxWidth] = useState('100%');
@@ -49,8 +41,8 @@ const Product = () => {
   };
 
   useEffect(() => {
-    if (productName) {
-      defaultInstance.get(`/products/${productName}`)
+    if (productId) {
+      defaultInstance.get(`/products/${productId}`)
         .then(res => {
           setProductData(res.data);
         })
@@ -59,7 +51,7 @@ const Product = () => {
           setProductData(null);
         });
     }
-  }, [productName]);
+  }, [productId]);
 
   useEffect(() => {
     if (titleRef.current && productData) {
@@ -72,16 +64,16 @@ const Product = () => {
   }, [productData]);
 
   useEffect(() => {
-    if (productName) {
+    if (productId) {
       dispatch(setBreadcrumbs([
         { label: 'Dashboard', path: '/' },
         matchedCategory
           ? { label: matchedCategory.name, path: `/category/${categorySlug}` }
           : { label: categoryName, path: `/category/${categorySlug}` },
-        { label: matchedProduct ? matchedProduct.name : productNameState, path: `/category/${categorySlug}/product/${productSlug}` }
+        { label: productData ? productData.numerologicalName : '', path: `/category/${categorySlug}/product/${productId}` }
       ]));
     }
-  }, [dispatch, productName, categoryName, categorySlug, matchedCategory, matchedProduct, productSlug, productNameState]);
+  }, [dispatch, productId, categoryName, categorySlug, matchedCategory, productData]);
 
   return (
     <div className="product-root">
@@ -100,31 +92,50 @@ const Product = () => {
               display: 'flex',
               flexDirection: 'column',
               gap: '16px',
-              marginRight: '24px',
+              marginRight: '20px',
               justifyContent: 'center',
               height: '100%'
             }}
           >
-            {productImages.map((img, idx) => (
+            {productData && productData.image && Array.isArray(productData.image) && productData.image.map((img, idx) => (
               <img
                 key={idx}
-                src={img}
+                src={`${API_BASE_URL}/${img}`}
                 alt={`Thumbnail ${idx + 1}`}
                 className="product-thumbnail-img"
                 style={{
                   border: idx === selectedImgIdx ? '1px solid #017dbe' : '1px solid #ccc',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
                 onClick={() => setSelectedImgIdx(idx)}
               />
             ))}
+            {productData && productData.image && !Array.isArray(productData.image) && (
+              <img
+                src={`${API_BASE_URL}/${productData.image}`}
+                alt="Thumbnail"
+                className="product-thumbnail-img"
+                style={{ marginLeft: 0, padding: '5px' }}
+
+                onClick={() => setSelectedImgIdx(0)}
+              />
+            )}
           </div>
-          <img
-            src={productImages[selectedImgIdx]}
-            alt="Main chair"
-            className="product-main-img"
-            style={{ marginLeft: 0 }}
-          />
+          {productData && productData.image && Array.isArray(productData.image) ? (
+            <img
+              src={`${API_BASE_URL}/${productData.image[selectedImgIdx]}`}
+              alt="Main chair"
+              className="product-main-img"
+              style={{ marginLeft: 0, padding: '10px' }}
+            />
+          ) : productData && productData.image ? (
+            <img
+              src={`${API_BASE_URL}/${productData.image}`}
+              alt="Main chair"
+              className="product-main-img"
+              style={{ marginLeft: 0, padding: '10px' }}
+            />
+          ) : null}
         </div>
 
         <div className="product-info-section" ref={infoRef}>

@@ -23,10 +23,13 @@ const Category = () => {
   const categoryId = matchedCategory ? matchedCategory.id : null
 
   useEffect(() => {
-    if (categoryId) {
+    if (categoryId || categoryName) {
       defaultInstance.get('/products')
         .then(res => {
-          const filteredProducts = res.data.filter(product => product.category_id === categoryId);
+          const filteredProducts = res.data.filter(product =>
+            (product.category_id === categoryId) ||
+            (product.category && slugify(product.category) === categorySlug)
+          );
           setProducts(filteredProducts);
         })
         .catch(error => {
@@ -53,11 +56,18 @@ const Category = () => {
         კატალოგი <span style={{ color: '#000' }}>/ {matchedCategory ? matchedCategory.name : categoryName}</span>
       </h2>
       <div className="categoryItems-list">
-        {paginatedProducts.map(product => (
-          <div key={product.id} className='category-item'>
-            <ItemCard product={product} category={{ name: matchedCategory ? matchedCategory.name : categoryName }} />
-          </div>
-        ))}
+        {paginatedProducts.map(product => {
+          const cardCategory = product.category
+            ? { name: product.category }
+            : matchedCategory
+              ? { name: matchedCategory.name }
+              : { name: categoryName };
+          return (
+            <div key={product.id} className='category-item'>
+              <ItemCard product={product} category={cardCategory} />
+            </div>
+          );
+        })}
       </div>
       <Pagination
         totalItems={products.length}

@@ -10,6 +10,12 @@ const ItemCard = ({ product, category }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    console.log('ItemCard handleClick:', {
+      category,
+      productId: product.id,
+      slug: category && category.name ? slugify(category.name) : null
+    });
+    if (!category || !category.name || !product.id) return;
     navigate(`/category/${slugify(category.name)}/product/${product.id}`);
     window.scrollTo(0, 0);
   };

@@ -80,7 +80,7 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route index element={<Dashboard />} />
                 <Route path="category/:categoryName" element={<Category />} />
-                <Route path="category/:categoryName/product/:productName" element={<Product />} />
+                <Route path="category/:categoryName/product/:productId" element={<Product />} />
               </Route>
               <Route path="login" element={<Login />} />
               <Route path="/admin/*" element={<AdminPage />} />

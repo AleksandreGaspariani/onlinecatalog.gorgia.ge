@@ -3,11 +3,6 @@ import Slider from 'react-slick'
 import "slick-carousel/slick/slick.css"
 import "slick-carousel/slick/slick-theme.css"
 import '../assets/css/CarouselModal.css'
-import BedroomPng from '../assets/images/bedroom.png'
-import LivingRoomPng from '../assets/images/livingRoom.png'
-import BathroomPng from '../assets/images/bathroom.png'
-import DecorationPng from '../assets/images/decorations.png'
-import OfficePng from '../assets/images/office.png'
 import ItemCard from './ItemCard';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -54,8 +49,12 @@ const CarouselModal = () => {
         <button
           className="carousel-seeall-btn"
           onClick={() => {
-            navigate(`/category/${slugify(allCategory.name)}`);
-            window.scrollTo(0, 0);
+            if (allCategory) {
+              navigate(`/category/${slugify(allCategory.name)}/product/${popularProducts[0].id}`);
+              window.scrollTo(0, 0);
+            } else {
+              alert('კატეგორია "ყველა" ვერ მოიძებნა!');
+            }
           }}
         >
           ნახეთ ყველა &gt;
@@ -63,11 +62,16 @@ const CarouselModal = () => {
       </div>
       <div className='carousel-container'>
         <Slider {...settings}>
-          {popularProducts.map(product => (
-            <div key={product.id} className='carousel-item'>
-              <ItemCard product={product} category={popularCategory} />
-            </div>
-          ))}
+          {popularProducts.map(product => {
+            const productCategory = product.category
+              ? { name: product.category }
+              : allCategory || popularCategory;
+            return (
+              <div key={product.id} className='carousel-item'>
+                <ItemCard product={product} category={productCategory} />
+              </div>
+            );
+          })}
         </Slider>
       </div>
     </div>

@@ -29,7 +29,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           border: 'none',
           cursor: 'pointer',
           fontSize: '22px',
-          color: currentPage === 1 ? '#bdbdbd' : '#017dbe', 
+          color: currentPage === 1 ? '#bdbdbd' : '#017dbe',
           outline: 'none'
         }}
       >
@@ -46,7 +46,6 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
               background: currentPage === page ? '#017dbe' : 'none',
               color: currentPage === page ? '#fff' : '#017dbe',
               border: 'none',
-            //   borderRadius: '4px',
               width: '32px',
               height: '32px',
               cursor: 'pointer',
@@ -70,18 +69,12 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
           border: 'none',
           cursor: 'pointer',
           fontSize: '22px',
-          color: currentPage === totalPages ? '#bdbdbd' : '#017dbe', 
+          color: currentPage === totalPages ? '#bdbdbd' : '#017dbe',
           outline: 'none'
         }}
       >
         &gt;
       </button>
-      <style jsx>{`
-        .hoveredButton::hover {
-          background: #7979794d;
-          border-radius: 8px;
-        }
-      `}</style>
     </div>
   );
 };
