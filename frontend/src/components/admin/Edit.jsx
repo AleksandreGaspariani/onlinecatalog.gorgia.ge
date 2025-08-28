@@ -1,10 +1,143 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from '../../assets/css/Modal.module.css'
 import product from '../../assets/css/ProductPage.module.css'
 import Modal from './Modal'
 
-const Edit = ({ open, onClose, title, fields, onSubmit, submitLabel, splitColumns }) => {
+const Edit = ({
+    open,
+    onClose,
+    title,
+    fields = [], // <-- Default to empty array
+    onSubmit,
+    submitLabel,
+    splitColumns,
+    children
+}) => {
+    const [showSuggestions, setShowSuggestions] = useState({});
+    const [filteredSuggestions, setFilteredSuggestions] = useState({});
+
     if (!open) return null
+
+    const handleInputChange = (field, e) => {
+        if (field.suggestions && field.suggestions.length > 0) {
+            const value = e.target.value;
+            // Split by spaces, get last word
+            const words = value.trim().toLowerCase().split(' ');
+            const lastWord = words[words.length - 1];
+            const filtered = field.suggestions.filter(
+                suggestion => suggestion.toLowerCase().startsWith(lastWord)
+            );
+            setFilteredSuggestions({
+                ...filteredSuggestions,
+                [field.name]: filtered
+            });
+            setShowSuggestions({
+                ...showSuggestions,
+                [field.name]: true
+            });
+        }
+        field.onChange(e);
+    };
+
+    const handleSuggestionClick = (field, suggestion) => {
+        // Replace only the last word in the input
+        const currentValue = field.value || '';
+        const words = currentValue.split(' ');
+        words[words.length - 1] = suggestion;
+        const newValue = words.join(' ');
+        // Create a synthetic event object
+        const syntheticEvent = {
+            target: {
+                name: field.name,
+                value: newValue,
+                type: 'text'
+            }
+        };
+        field.onChange(syntheticEvent);
+        setShowSuggestions({
+            ...showSuggestions,
+            [field.name]: false
+        });
+    };
+
+    const renderInput = (field) => {
+        if (field.type === 'text' && field.autocomplete && field.suggestions) {
+            return (
+                <div style={{ position: 'relative' }}>
+                    <input
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        value={field.value}
+                        onChange={(e) => handleInputChange(field, e)}
+                        className={product.modalFormInput}
+                        autoFocus={field.autoFocus}
+                        onFocus={() => {
+                            if (field.value) {
+                                setShowSuggestions({
+                                    ...showSuggestions,
+                                    [field.name]: true
+                                });
+                            }
+                        }}
+                        onBlur={() => {
+                            // Delay hiding suggestions to allow click to register
+                            setTimeout(() => {
+                                setShowSuggestions({
+                                    ...showSuggestions,
+                                    [field.name]: false
+                                });
+                            }, 200);
+                        }}
+                    />
+                    {showSuggestions[field.name] && filteredSuggestions[field.name] && (
+                        <ul style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            width: '100%',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            listStyle: 'none',
+                            margin: 0,
+                            padding: 0,
+                            border: '1px solid #ccc',
+                            borderTop: 'none',
+                            zIndex: 1000,
+                            backgroundColor: 'white'
+                        }}>
+                            {filteredSuggestions[field.name].map((suggestion, index) => (
+                                <li
+                                    key={index}
+                                    style={{
+                                        padding: '8px 12px',
+                                        cursor: 'pointer',
+                                        borderBottom: '1px solid #eee'
+                                    }}
+                                    onClick={() => handleSuggestionClick(field, suggestion)}
+                                    onMouseDown={(e) => e.preventDefault()} // Prevent blur event from firing
+                                >
+                                    {suggestion}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
+            );
+        }
+
+        return (
+            <input
+                id={field.name}
+                name={field.name}
+                type={field.type}
+                value={field.value}
+                onChange={field.onChange}
+                className={product.modalFormInput}
+                autoFocus={field.autoFocus}
+            />
+        );
+    };
 
     if (splitColumns && Array.isArray(fields)) {
         const rows = []
@@ -36,15 +169,7 @@ const Edit = ({ open, onClose, title, fields, onSubmit, submitLabel, splitColumn
                                             {left && (
                                                 <>
                                                     <label className={product.modalFormLabel} htmlFor={left.name} style={{ display: 'block', marginBottom: 5 }}>{left.label}</label>
-                                                    <input
-                                                        id={left.name}
-                                                        name={left.name}
-                                                        type={left.type}
-                                                        value={left.value}
-                                                        onChange={left.onChange}
-                                                        className={product.modalFormInput}
-                                                        autoFocus={left.autoFocus}
-                                                    />
+                                                    {renderInput(left)}
                                                 </>
                                             )}
                                         </div>
@@ -52,15 +177,7 @@ const Edit = ({ open, onClose, title, fields, onSubmit, submitLabel, splitColumn
                                             {right && (
                                                 <>
                                                     <label className={product.modalFormLabel} htmlFor={right.name} style={{ display: 'block', marginBottom: 5 }}>{right.label}</label>
-                                                    <input
-                                                        id={right.name}
-                                                        name={right.name}
-                                                        type={right.type}
-                                                        value={right.value}
-                                                        onChange={right.onChange}
-                                                        className={product.modalFormInput}
-                                                        autoFocus={right.autoFocus}
-                                                    />
+                                                    {renderInput(right)}
                                                 </>
                                             )}
                                         </div>
@@ -81,12 +198,49 @@ const Edit = ({ open, onClose, title, fields, onSubmit, submitLabel, splitColumn
         )
     }
 
+    // If children are provided, render them instead of Modal
+    if (typeof children !== 'undefined') {
+        return (
+            <div className={styles.modalOverlay}>
+                <div className={styles.modalContent} style={{ padding: '40px 32px 32px 32px', width: 520 }}>
+                    <div className={styles.modalHeader}>
+                        {title && <h2 className={styles.modalTitle}>{title}</h2>}
+                        <button
+                            className={styles.modalCloseBtn}
+                            onClick={onClose}
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
+                    </div>
+                    <div className={styles.modalBody}>
+                        <form onSubmit={onSubmit} className={product.modalForm}>
+                            {children}
+                            <button
+                                type="submit"
+                                className={product.modalFormBtn}
+                                style={{ width: '100%', marginTop: 12 }}
+                            >
+                                {submitLabel || 'Save'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
     return (
         <Modal
             open={open}
             onClose={onClose}
             title={title}
-            fields={fields}
+            fields={Array.isArray(fields)
+                ? fields.map(field => ({
+                    ...field,
+                    customInput: field.autocomplete ? renderInput(field) : undefined
+                }))
+                : []} // <-- Ensure fields is always an array
             onSubmit={onSubmit}
             submitLabel={submitLabel}
         />

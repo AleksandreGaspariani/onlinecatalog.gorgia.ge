@@ -19,6 +19,8 @@ const CategoryTable = () => {
     const [addModalOpen, setAddModalOpen] = useState(false)
     const [addForm, setAddForm] = useState({ name: '', image: '' })
     const [categories, setCategories] = useState([])
+    const [suggestions, setSuggestions] = useState([])
+    const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
     useEffect(() => {
         defaultInstance.get('/categories')
@@ -34,6 +36,29 @@ const CategoryTable = () => {
                 console.error('Error fetching categories:', error)
             })
     }, [])
+
+    const fetchSuggestions = async () => {
+        try {
+            const response = await defaultInstance.get('/group/names', {
+                baseURL: 'https://back.gorgia.ge/api/online_catalog'
+            });
+
+            if (response.data && response.data.data && response.data.data.original &&
+                response.data.data.original.groups) {
+                const groupsData = response.data.data.original.groups;
+                const suggestionsList = Object.values(groupsData);
+                setSuggestions(suggestionsList);
+            }
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+            setSuggestions([
+                'გასაყიდი საქონლი',
+                'ხელსაწყოები',
+                'ავტომობილის მოვლა და აქსესუარები',
+                'ავტომობილის მექანიზმის მოვლა'
+            ]);
+        }
+    };
 
     const handleEdit = (row) => {
         setEditForm({ id: row.id, name: row.name, image: row.image })
@@ -104,7 +129,25 @@ const CategoryTable = () => {
             setAddForm({ ...addForm, image: e.target.files[0] })
         } else {
             setAddForm({ ...addForm, [e.target.name]: e.target.value })
+            if (e.target.name === 'name') {
+                const inputValue = e.target.value.trim().toLowerCase()
+                if (inputValue.length === 0) {
+                    setFilteredSuggestions([])
+                } else {
+                    // Use the whole input value for filtering
+                    const matches = suggestions.filter(sugg =>
+                        sugg.toLowerCase().startsWith(inputValue)
+                    )
+                    setFilteredSuggestions(matches)
+                }
+            }
         }
+    }
+
+    // When clicking a suggestion, fill the whole input
+    const handleSuggestionClick = (suggestion) => {
+        setAddForm({ ...addForm, name: suggestion })
+        setFilteredSuggestions([])
     }
 
     const handleAddSubmit = async e => {
@@ -131,8 +174,21 @@ const CategoryTable = () => {
         }
     }
 
+    const handleAddModalOpen = () => {
+        fetchSuggestions();
+        setAddModalOpen(true);
+    }
+
     const addFields = [
-        { label: 'დასახელება', type: 'text', name: 'name', value: addForm.name, onChange: handleAddChange },
+        {
+            label: 'დასახელება',
+            type: 'text',
+            name: 'name',
+            value: addForm.name,
+            onChange: handleAddChange,
+            autocomplete: false
+        },
+
         { label: 'სურათი', type: 'file', name: 'image', onChange: handleAddChange }
     ]
 
@@ -165,7 +221,7 @@ const CategoryTable = () => {
         <>
             <button
                 className={product.addProductBtn}
-                onClick={() => setAddModalOpen(true)}
+                onClick={handleAddModalOpen}
             >
                 <IoIosAdd fontSize="20px" color='#fff' />
                 კატეგორიის დამატება
@@ -188,10 +244,97 @@ const CategoryTable = () => {
                 open={addModalOpen}
                 onClose={() => setAddModalOpen(false)}
                 title="კატეგორიის დამატება"
-                fields={addFields}
                 onSubmit={handleAddSubmit}
                 submitLabel="დამატება"
-            />
+            >
+                <div style={{ margin: '20px 0 15px 0', position: 'relative', textAlign: 'left', }}>
+                    <label
+                        style={{
+                            display: 'block',
+                            marginBottom: 6,
+                            color: '#444',
+                            fontSize: '16px',
+                        }}
+                    >
+                        დასახელება
+                    </label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={addForm.name}
+                        onChange={handleAddChange}
+                        autoComplete="off"
+                        style={{
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            padding: '10px 18px',
+                            backgroundColor: '#fff',
+                            color: '#292929ff',
+                            outline: 'none',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px',
+                            fontSize: '16px'
+                        }}
+                    />
+                    {addModalOpen && filteredSuggestions.length > 0 && (
+                        <div style={{
+                            position: 'absolute',
+                            top: '100%',
+                            left: 0,
+                            background: '#fff',
+                            textAlign: 'left',
+                            color: 'black',
+                            border: '1px solid #ccc',
+                            zIndex: 1000,
+                            width: '100%',
+                            maxHeight: '150px',
+                            overflowY: 'auto',
+                            borderRadius: '0 0 8px 8px'
+                        }}>
+                            {filteredSuggestions.map((sugg, idx) => (
+                                <div
+                                    key={idx}
+                                    style={{
+                                        padding: '8px',
+                                        cursor: 'pointer'
+                                    }}
+                                    onMouseDown={() => handleSuggestionClick(sugg)}
+                                >
+                                    {sugg}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <div style={{ marginBottom: '16px', textAlign: 'left' }}>
+                    <label
+                        style={{
+                            display: 'block',
+                            marginBottom: 6,
+                            color: '#444',
+                            fontSize: '16px'
+                        }}
+                    >
+                        სურათი
+                    </label>
+                    <input
+                        type="file"
+                        name="image"
+                        onChange={handleAddChange}
+                        style={{
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            padding: '10px 18px',
+                            backgroundColor: '#fff',
+                            color: '#292929ff',
+                            outline: 'none',
+                            border: '1px solid #e0e0e0',
+                            borderRadius: '8px',
+                            fontSize: '16px'
+                        }}
+                    />
+                </div>
+            </Edit>
             <DeleteModal
                 open={deleteModalOpen}
                 onClose={() => setDeleteModalOpen(false)}
@@ -216,3 +359,4 @@ const CategoryTable = () => {
 }
 
 export default CategoryTable
+
