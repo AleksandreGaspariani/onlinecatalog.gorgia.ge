@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../redux/userSlice';
 import styles from '../assets/css/Login.module.css';
@@ -10,7 +9,6 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
@@ -27,7 +25,7 @@ export default function Login() {
       const user = response.data.user;
       dispatch(setUser(user));
 
-      navigate('/');
+      window.location.replace('/');
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials.';
       setError(errorMessage);

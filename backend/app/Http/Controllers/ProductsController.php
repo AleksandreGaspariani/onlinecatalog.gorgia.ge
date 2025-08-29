@@ -52,7 +52,7 @@ class ProductsController extends Controller
             'packageCount' => $request->input('packageCount'),
             'manufacturer' => $request->input('manufacturer'),
             'annotation' => $request->input('annotation'),
-            'image' => $imagePaths,
+            'image' => json_encode($imagePaths),
         ]);
 
         return response()->json($product, 201);
@@ -105,9 +105,22 @@ class ProductsController extends Controller
     public function destroy($id)
     {
         $product = Products::findOrFail($id);
-        if ($product->image && File::exists(public_path($product->image))) {
-            File::delete(public_path($product->image));
+
+        $images = [];
+        if ($product->image) {
+            if (is_string($product->image)) {
+                $images = json_decode($product->image, true) ?? [];
+            } elseif (is_array($product->image)) {
+                $images = $product->image;
+            }
         }
+
+        foreach ($images as $imagePath) {
+            if (File::exists(public_path($imagePath))) {
+                File::delete(public_path($imagePath));
+            }
+        }
+
         $product->delete();
         return response()->json(null, 204);
     }

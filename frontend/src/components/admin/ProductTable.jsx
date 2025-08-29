@@ -164,7 +164,21 @@ const ProductTable = () => {
     }
 
     const handleImagePreview = (img, row) => {
-        setImageToPreview(Array.isArray(img) ? img : [img])
+        let imageArr = [];
+
+        if (typeof img === "string") {
+            try {
+                imageArr = JSON.parse(img);
+            } catch (error) {
+                imageArr = [img];
+            }
+        } else if (Array.isArray(img)) {
+            imageArr = img;
+        } else if (img) {
+            imageArr = [img];
+        }
+
+        setImageToPreview(imageArr)
         setImageIdToPreview(row.id)
         setImageModalOpen(true)
     }

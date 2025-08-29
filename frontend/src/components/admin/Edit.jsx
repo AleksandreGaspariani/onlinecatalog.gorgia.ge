@@ -7,7 +7,7 @@ const Edit = ({
     open,
     onClose,
     title,
-    fields = [], // <-- Default to empty array
+    fields = [],
     onSubmit,
     submitLabel,
     splitColumns,
@@ -21,7 +21,6 @@ const Edit = ({
     const handleInputChange = (field, e) => {
         if (field.suggestions && field.suggestions.length > 0) {
             const value = e.target.value;
-            // Split by spaces, get last word
             const words = value.trim().toLowerCase().split(' ');
             const lastWord = words[words.length - 1];
             const filtered = field.suggestions.filter(
@@ -40,12 +39,10 @@ const Edit = ({
     };
 
     const handleSuggestionClick = (field, suggestion) => {
-        // Replace only the last word in the input
         const currentValue = field.value || '';
         const words = currentValue.split(' ');
         words[words.length - 1] = suggestion;
         const newValue = words.join(' ');
-        // Create a synthetic event object
         const syntheticEvent = {
             target: {
                 name: field.name,
@@ -81,7 +78,6 @@ const Edit = ({
                             }
                         }}
                         onBlur={() => {
-                            // Delay hiding suggestions to allow click to register
                             setTimeout(() => {
                                 setShowSuggestions({
                                     ...showSuggestions,
@@ -115,7 +111,7 @@ const Edit = ({
                                         borderBottom: '1px solid #eee'
                                     }}
                                     onClick={() => handleSuggestionClick(field, suggestion)}
-                                    onMouseDown={(e) => e.preventDefault()} // Prevent blur event from firing
+                                    onMouseDown={(e) => e.preventDefault()}
                                 >
                                     {suggestion}
                                 </li>
@@ -198,7 +194,6 @@ const Edit = ({
         )
     }
 
-    // If children are provided, render them instead of Modal
     if (typeof children !== 'undefined') {
         return (
             <div className={styles.modalOverlay}>
@@ -240,7 +235,7 @@ const Edit = ({
                     ...field,
                     customInput: field.autocomplete ? renderInput(field) : undefined
                 }))
-                : []} // <-- Ensure fields is always an array
+                : []}
             onSubmit={onSubmit}
             submitLabel={submitLabel}
         />

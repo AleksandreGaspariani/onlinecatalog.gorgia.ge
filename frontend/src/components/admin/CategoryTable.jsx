@@ -21,6 +21,7 @@ const CategoryTable = () => {
     const [categories, setCategories] = useState([])
     const [suggestions, setSuggestions] = useState([])
     const [filteredSuggestions, setFilteredSuggestions] = useState([])
+    const [groupMap, setGroupMap] = useState({});
 
     useEffect(() => {
         defaultInstance.get('/categories')
@@ -48,6 +49,7 @@ const CategoryTable = () => {
                 const groupsData = response.data.data.original.groups;
                 const suggestionsList = Object.values(groupsData);
                 setSuggestions(suggestionsList);
+                setGroupMap(groupsData);
             }
         } catch (error) {
             console.error('Error fetching suggestions:', error);
@@ -134,7 +136,6 @@ const CategoryTable = () => {
                 if (inputValue.length === 0) {
                     setFilteredSuggestions([])
                 } else {
-                    // Use the whole input value for filtering
                     const matches = suggestions.filter(sugg =>
                         sugg.toLowerCase().startsWith(inputValue)
                     )
@@ -144,7 +145,6 @@ const CategoryTable = () => {
         }
     }
 
-    // When clicking a suggestion, fill the whole input
     const handleSuggestionClick = (suggestion) => {
         setAddForm({ ...addForm, name: suggestion })
         setFilteredSuggestions([])
@@ -158,6 +158,16 @@ const CategoryTable = () => {
             formData.append('image', addForm.image);
         }
 
+        let group_id = null;
+        for (const [id, name] of Object.entries(groupMap)) {
+            if (name === addForm.name) {
+                group_id = id;
+                break;
+            }
+        }
+        if (group_id) {
+            formData.append('group_id', group_id);
+        }
         try {
             await defaultInstance.post('/categories', formData, {
                 headers: {

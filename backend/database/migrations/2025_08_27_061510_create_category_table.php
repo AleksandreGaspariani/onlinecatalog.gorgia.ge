@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('category', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('group_id')->nullable();
+            $table->string('group_id')->nullable();
             $table->string('name');
             $table->string('attachment')->nullable();
             $table->timestamps();

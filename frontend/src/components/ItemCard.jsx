@@ -25,11 +25,24 @@ const ItemCard = ({ product, category }) => {
 
       <img
         src={
-          product.image
-            ? Array.isArray(product.image)
-              ? `${API_BASE_URL}/${product.image[0]}`
-              : `${API_BASE_URL}/${product.image}`
-            : '/default-image.png'
+          (() => {
+            if (!product.image) return '/default-image.png';
+            if (typeof product.image === 'string') {
+              try {
+                const parsed = JSON.parse(product.image);
+                if (Array.isArray(parsed)) {
+                  return `${API_BASE_URL}/${parsed[0]}`;
+                }
+                return `${API_BASE_URL}/${product.image}`;
+              } catch {
+                return `${API_BASE_URL}/${product.image}`;
+              }
+            }
+            if (Array.isArray(product.image)) {
+              return `${API_BASE_URL}/${product.image[0]}`;
+            }
+            return `${API_BASE_URL}/${product.image}`;
+          })()
         }
         alt={product.name}
         className="carousel-img"

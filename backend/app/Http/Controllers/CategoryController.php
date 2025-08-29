@@ -12,7 +12,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'group_id' => 'nullable|integer',
+            'group_id' => 'nullable|string|max:50',
             'image' => 'nullable|file|image|max:2048',
         ]);
 
@@ -41,7 +41,7 @@ class CategoryController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'group_id' => 'nullable|integer',
+            'group_id' => 'nullable|string|max:50',
             'image' => 'nullable|file|image|max:2048',
         ]);
 

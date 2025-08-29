@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -14,7 +13,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->group(function () {
     // User profile routes
@@ -39,4 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products/{product}', [ProductsController::class, 'show']);
     Route::put('/products/{product}', [ProductsController::class, 'update']);
     Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 });
