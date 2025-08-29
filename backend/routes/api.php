@@ -40,9 +40,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/products/{product}', [ProductsController::class, 'update']);
     Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
 });
-
-Route::get('/proxy-gorgia-api', function (Request $request) {
-    $client = new \GuzzleHttp\Client();
-    $response = $client->get('https://back.gorgia.ge/api/online_catalog/group/names');
-    return response()->json(json_decode($response->getBody()->getContents()));
-});

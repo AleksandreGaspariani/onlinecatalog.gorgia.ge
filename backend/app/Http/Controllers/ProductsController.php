@@ -22,13 +22,22 @@ class ProductsController extends Controller
             'packageCount' => 'nullable|integer',
             'manufacturer' => 'nullable|string|max:255',
             'annotation' => 'nullable|string',
-            'image' => 'nullable|file|image|max:2048',
+            'image' => 'nullable',
+            'image.*' => 'file|image|max:2048',
         ]);
 
-        $imagePath = null;
+        $imagePaths = [];
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('products', 'public');
-            $imagePath = 'storage/' . $path;
+            $images = $request->file('image');
+            if (is_array($images)) {
+                foreach ($images as $file) {
+                    $path = $file->store('products', 'public');
+                    $imagePaths[] = 'storage/' . $path;
+                }
+            } else {
+                $path = $images->store('products', 'public');
+                $imagePaths[] = 'storage/' . $path;
+            }
         }
 
         $product = Products::create([
@@ -43,7 +52,7 @@ class ProductsController extends Controller
             'packageCount' => $request->input('packageCount'),
             'manufacturer' => $request->input('manufacturer'),
             'annotation' => $request->input('annotation'),
-            'image' => $imagePath,
+            'image' => $imagePaths,
         ]);
 
         return response()->json($product, 201);

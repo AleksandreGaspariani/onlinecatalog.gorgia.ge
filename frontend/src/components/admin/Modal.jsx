@@ -40,6 +40,8 @@ const Modal = ({ open, onClose, title, children, fields, onSubmit, submitLabel }
                                             onChange={field.onChange}
                                             className={product.modalFormInput}
                                             autoFocus={field.autoFocus}
+                                            multiple={field.multiple}
+                                            accept='image/*'
                                         />
                                     ) : field.type === 'select' ? (
                                         <select

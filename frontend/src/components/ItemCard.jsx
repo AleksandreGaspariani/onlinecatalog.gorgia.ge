@@ -24,7 +24,13 @@ const ItemCard = ({ product, category }) => {
     <div className="carousel-card">
 
       <img
-        src={product.image ? `${API_BASE_URL}/${product.image}` : '/default-image.png'}
+        src={
+          product.image
+            ? Array.isArray(product.image)
+              ? `${API_BASE_URL}/${product.image[0]}`
+              : `${API_BASE_URL}/${product.image}`
+            : '/default-image.png'
+        }
         alt={product.name}
         className="carousel-img"
       />

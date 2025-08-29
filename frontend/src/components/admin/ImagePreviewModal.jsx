@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styles from '../../assets/css/Modal.module.css'
-import product from '../../assets/css/ProductPage.module.css'
 import defaultInstance from '../../api/defaultInstance'
 import DeleteModal from './DeleteModal'
 
@@ -11,39 +10,11 @@ const ImagePreviewModal = ({ open, onClose, image, onImageChange, imageId, onIma
     const [file, setFile] = useState(null)
     const [loading, setLoading] = useState(false)
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-    const fileInputRef = useRef(null)
 
     React.useEffect(() => {
         setPreview(image)
         setFile(null)
     }, [image, open])
-
-    const handleFileChange = (e) => {
-        const file = e.target.files[0]
-        if (file) {
-            const url = URL.createObjectURL(file)
-            setPreview(url)
-            setFile(file)
-            if (onImageChange) onImageChange(file)
-        }
-    }
-
-    const handleUpdate = async () => {
-        if (!file || !imageId) return
-        setLoading(true)
-        try {
-            const formData = new FormData()
-            formData.append('image', file)
-            await defaultInstance.post(`/images/${imageId}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            })
-            if (onImageUpdated) onImageUpdated(file)
-            setFile(null)
-        } catch (err) {
-            alert('სურათის განახლება ვერ მოხერხდა')
-        }
-        setLoading(false)
-    }
 
     const handleDelete = async () => {
         if (!imageId) return
@@ -54,7 +25,7 @@ const ImagePreviewModal = ({ open, onClose, image, onImageChange, imageId, onIma
             setFile(null)
             if (onImageDeleted) onImageDeleted()
             setDeleteModalOpen(false)
-        } catch (err) {
+        } catch (error) {
             alert('სურათის წაშლა ვერ მოხერხდა')
         }
         setLoading(false)
@@ -75,12 +46,21 @@ const ImagePreviewModal = ({ open, onClose, image, onImageChange, imageId, onIma
                         ×
                     </button>
                 </div>
-                <div className={styles.modalBody} style={{ textAlign: 'center', marginTop: '2rem' }}>
-                    {preview ? (
+                <div className={styles.modalBody} style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '2rem' }}>
+                    {image && Array.isArray(image) && image.length > 0 ? (
+                        image.map((img, idx) => (
+                            <img
+                                key={idx}
+                                src={`${API_BASE_URL}/${img}`}
+                                alt={`img-${idx}`}
+                                style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: 8, marginBottom: 16 }}
+                            />
+                        ))
+                    ) : image ? (
                         <img
                             src={`${API_BASE_URL}/${image}`}
-                            alt="სურათის დამატება"
-                            style={{ maxWidth: '100%', maxHeight: 300, borderRadius: 8, marginBottom: 16 }}
+                            alt="img"
+                            style={{ maxWidth: '200px', maxHeight: '200px', borderRadius: 8, marginBottom: 16 }}
                         />
                     ) : (
                         <div style={{ marginBottom: 16 }}>სურათი ვერ მოიძებნა</div>

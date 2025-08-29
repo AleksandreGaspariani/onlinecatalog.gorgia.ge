@@ -65,39 +65,34 @@ const ProductTable = () => {
         packageCount: '',
         manufacturer: '',
         annotation: '',
-        image: ''
+        image: null
     })
 
     const handleProductSubmit = async e => {
         e.preventDefault()
-
         const formData = new FormData()
         Object.entries(productForm).forEach(([key, value]) => {
             if (key === 'image' && value) {
-                formData.append('image', value)
+                Array.from(value).forEach(file => {
+                    formData.append('image[]', file)
+                })
             } else if (key !== 'image') {
                 formData.append(key, value)
             }
         })
 
-
         try {
             const response = await defaultInstance.post('/products', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok')
-            }
-
-            const data = await response.json()
-            console.log('Product added:', data)
+            console.log('Product added:', response.data)
         } catch (error) {
             console.error('Error adding product:', error)
         }
 
         setModalOpen(false)
         setProductForm({
+            category_id: '',
             productCode: '',
             numerologicalName: '',
             price: '',
@@ -169,7 +164,7 @@ const ProductTable = () => {
     }
 
     const handleImagePreview = (img, row) => {
-        setImageToPreview(img)
+        setImageToPreview(Array.isArray(img) ? img : [img])
         setImageIdToPreview(row.id)
         setImageModalOpen(true)
     }
@@ -294,7 +289,8 @@ const ProductTable = () => {
         type: 'file',
         name: 'image',
         value: undefined,
-        onChange: e => setProductForm({ ...productForm, image: e.target.files[0] })
+        onChange: e => setProductForm({ ...productForm, image: e.target.files }),
+        multiple: true,
     })
 
     const product1cFields = [

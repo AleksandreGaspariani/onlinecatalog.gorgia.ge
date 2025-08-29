@@ -28,7 +28,7 @@ return new class extends Migration
             $table->integer('packageCount')->nullable();
             $table->string('manufacturer')->nullable();
             $table->text('annotation')->nullable();
-            $table->string('image')->nullable();
+            $table->json('image')->nullable();
             $table->timestamps();
 
             $table->foreign('category_id')->references('id')->on('category')->onDelete('set null');
