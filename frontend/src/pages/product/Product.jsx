@@ -44,7 +44,16 @@ const Product = () => {
     if (productId) {
       defaultInstance.get(`/products/${productId}`)
         .then(res => {
-          setProductData(res.data);
+          let data = res.data;
+
+          if (data.image && typeof data.image === 'string' && data.image.startsWith('[')) {
+            try {
+              data.image = JSON.parse(data.image);
+            } catch (e) {
+              console.error('Error parsing image JSON:', e);
+            }
+          }
+          setProductData(data);
         })
         .catch(error => {
           console.log(error);
