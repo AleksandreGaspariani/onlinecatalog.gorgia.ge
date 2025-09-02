@@ -193,7 +193,7 @@ const Product = () => {
               <p>მწარმოებელი ქვეყანა: {productData ? productData.manufacturer : ''} </p>
             </div>
             <button style={{ backgroundColor: '#017dbe', borderRadius: '10px', padding: '10px 20px', cursor: 'pointer', outline: 'none' }}>
-              <span style={{ color: '#fff', fontWeight: 'bold' }}>შეკვეთა</span>
+              <a href="/admin/requests" style={{ color: '#fff', fontWeight: 'bold' }}>შეკვეთა</a>
             </button>
           </div>
         </div>

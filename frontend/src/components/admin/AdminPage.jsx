@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import styles from '../../assets/css/AdminPage.module.css'
-import { useNavigate, useLocation, Outlet, Routes, Route } from 'react-router-dom'
+import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom'
 import CategoryTable from './CategoryTable'
 import ProductTable from './ProductTable'
 import OrderRequest from './OrderRequestTable'
@@ -10,22 +11,31 @@ import Users from './UsersTable'
 import { FaHome, FaThList, FaBoxOpen, FaClipboardList, FaShoppingCart, FaUserCircle, FaUsers } from 'react-icons/fa'
 import defaultInstance from '../../api/defaultInstance'
 
-const sidebarItems = [
-    { label: 'მთავარი', key: 'main', icon: <FaHome />, path: '/' },
-    { label: 'კატეგორიები', key: 'categories', icon: <FaThList />, path: '/admin/categories' },
-    { label: 'პროდუქტები', key: 'products', icon: <FaBoxOpen />, path: '/admin/products' },
-    { label: 'შეკვეთების მოთხოვნები', key: 'requests', icon: <FaClipboardList />, path: '/admin/requests' },
-    { label: 'შეკვეთები', key: 'orders', icon: <FaShoppingCart />, path: '/admin/orders' },
-    { label: 'პროფილი', key: 'profile', icon: <FaUserCircle />, path: '/admin/profile' },
-    { label: 'მომხმარებლები', key: 'users', icon: <FaUsers />, path: '/admin/users' },
-];
+
 
 const AdminPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const navigate = useNavigate()
     const location = useLocation()
-
+    const role = useSelector(state => state.user.role)
     const currentPath = location.pathname
+
+    const sidebarItems = [
+        { label: 'მთავარი', key: 'main', icon: <FaHome />, path: '/' },
+        ...(role && role !== 'contragent'
+            ? [
+                { label: 'კატეგორიები', key: 'categories', icon: <FaThList />, path: '/admin/categories' },
+                { label: 'პროდუქტები', key: 'products', icon: <FaBoxOpen />, path: '/admin/products' }
+            ]
+            : []
+        ),
+        { label: 'შეკვეთების მოთხოვნები', key: 'requests', icon: <FaClipboardList />, path: '/admin/requests' },
+        { label: 'შეკვეთები', key: 'orders', icon: <FaShoppingCart />, path: '/admin/orders' },
+        { label: 'პროფილი', key: 'profile', icon: <FaUserCircle />, path: '/admin/profile' },
+        ...(role && role !== 'contragent'
+            ? [{ label: 'მომხმარებლები', key: 'users', icon: <FaUsers />, path: '/admin/users' }]
+            : [])
+    ];
 
     const handleLogout = async () => {
         try {
@@ -96,12 +106,30 @@ const AdminPage = () => {
             </aside>
             <main className={styles.adminMain}>
                 <Routes>
-                    <Route path="categories" element={<CategoryTable />} />
-                    <Route path="products" element={<ProductTable />} />
+                    <Route
+                        path="categories"
+                        element={
+                            role === 'contragent'
+                                ? <Navigate to="/admin/profile" replace />
+                                : <Users />
+                        }
+                    />
+                    <Route
+                        path="products"
+                        element={
+                            role === 'contragent'
+                                ? <Navigate to="/admin/profile" replace />
+                                : <Users />
+                        }
+                    />
                     <Route path="requests" element={<OrderRequest />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="profile" element={<Profile />} />
-                    <Route path="users" element={<Users />} />
+                    <Route path="users" element={
+                        role === 'contragent'
+                            ? <Navigate to="/admin/profile" replace />
+                            : <Users />
+                    } />
                     <Route index element={<CategoryTable />} />
                 </Routes>
             </main>

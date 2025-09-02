@@ -134,7 +134,7 @@ const HeaderModal = () => {
           <div className="profile-dropdown">
             <div className="profile-dropdown-item profile-dropdown-profile">
               <FaUserCircle style={{ marginRight: 8, color: "#017dbe" }} />
-              <a href="/admin">Profile</a>
+              <a href="/admin" style={{ color: "#017dbe" }}>Profile</a>
             </div>
             <div className="profile-dropdown-divider" />
             <div className="profile-dropdown-item profile-dropdown-logout" onClick={handleLogout}>

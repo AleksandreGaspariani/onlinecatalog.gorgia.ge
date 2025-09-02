@@ -6,6 +6,7 @@ import DeleteModal from './DeleteModal'
 import ImagePreviewModal from './ImagePreviewModal'
 import { IoIosAdd } from "react-icons/io";
 import defaultInstance from '../../api/defaultInstance'
+import axios from 'axios'
 
 
 const CategoryTable = () => {
@@ -40,25 +41,23 @@ const CategoryTable = () => {
 
     const fetchSuggestions = async () => {
         try {
-            const response = await defaultInstance.get('/group/names', {
-                baseURL: 'https://back.gorgia.ge/api/online_catalog'
+            const response = await axios.post('https://back.gorgia.ge/api/online_catalog/group/names', {
+                token: '$2y$12$dyqm74uwPn/FE674dAwba.fWgwMLcPI5ip4dSTNcH2neDl1Jk0Fni'
             });
 
-            if (response.data && response.data.data && response.data.data.original &&
-                response.data.data.original.groups) {
-                const groupsData = response.data.data.original.groups;
+            if (response.data && response.data.groups) {
+                const groupsData = response.data.groups;
                 const suggestionsList = Object.values(groupsData);
                 setSuggestions(suggestionsList);
                 setGroupMap(groupsData);
+            } else {
+                setSuggestions([]);
+                setGroupMap({});
             }
         } catch (error) {
             console.error('Error fetching suggestions:', error);
-            setSuggestions([
-                'გასაყიდი საქონლი',
-                'ხელსაწყოები',
-                'ავტომობილის მოვლა და აქსესუარები',
-                'ავტომობილის მექანიზმის მოვლა'
-            ]);
+            setSuggestions([]);
+            setGroupMap({});
         }
     };
 
@@ -136,8 +135,9 @@ const CategoryTable = () => {
                 if (inputValue.length === 0) {
                     setFilteredSuggestions([])
                 } else {
+                    // Use includes for substring matching, case-insensitive
                     const matches = suggestions.filter(sugg =>
-                        sugg.toLowerCase().startsWith(inputValue)
+                        sugg.toLowerCase().includes(inputValue)
                     )
                     setFilteredSuggestions(matches)
                 }
@@ -188,19 +188,6 @@ const CategoryTable = () => {
         fetchSuggestions();
         setAddModalOpen(true);
     }
-
-    const addFields = [
-        {
-            label: 'დასახელება',
-            type: 'text',
-            name: 'name',
-            value: addForm.name,
-            onChange: handleAddChange,
-            autocomplete: false
-        },
-
-        { label: 'სურათი', type: 'file', name: 'image', onChange: handleAddChange }
-    ]
 
     const columns = [
         { header: '#', accessor: 'id' },

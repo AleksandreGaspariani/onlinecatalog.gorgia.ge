@@ -1,23 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from './Table'
 import OrderRequestModal from './OrderRequestModal'
+import defaultInstance from '../../api/defaultInstance'
 
 const columns = [
     { header: 'შეკვეთის აიდი', accessor: 'id' },
-    { header: 'პროდუქტი', accessor: 'product' },
+    { header: 'პროდუქტი', accessor: 'numerologicalName' },
     { header: 'მოქმედება', accessor: 'actions' },
-]
-
-const data = [
-    {
-        id: 1,
-        product: 'პროდუქტი 1',
-    }
 ]
 
 const OrderRequest = () => {
     const [modalOpen, setModalOpen] = useState(false)
     const [selectedRow, setSelectedRow] = useState(null)
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        defaultInstance.get('/products')
+            .then(res => {
+                setData(res.data)
+                console.log(res.data)
+            })
+            .catch(err => {
+                console.error(err)
+            })
+    }, [])
 
     const handleOrderClick = (row) => {
         setSelectedRow(row)
