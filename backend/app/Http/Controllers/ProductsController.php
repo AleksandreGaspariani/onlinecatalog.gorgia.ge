@@ -49,6 +49,7 @@ class ProductsController extends Controller
         }
 
         $product = Products::create([
+            'user_id' => $request->user()->id,
             'category_id' => $request->input('category_id'),
             'category' => $request->input('category'),
             'numerologicalName' => $request->input('numerologicalName'),

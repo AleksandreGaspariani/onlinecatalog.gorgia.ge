@@ -17,6 +17,7 @@ return new class extends Migration
 
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('category_id')->nullable();
             $table->string('category')->nullable();
             $table->string('numerologicalName')->nullable();
@@ -30,6 +31,7 @@ return new class extends Migration
             $table->text('annotation')->nullable();
             $table->json('image')->nullable();
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 
