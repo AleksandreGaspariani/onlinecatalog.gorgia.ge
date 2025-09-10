@@ -29,6 +29,21 @@ const Users = () => {
     const userRole = useSelector(state => state.user?.role);
     const dispatch = useDispatch();
 
+    const getRoleLabel = (role) => {
+        switch (role) {
+            case 'admin':
+                return 'ადმინისტრატორი';
+            case 'operator':
+                return 'ოპერატორი';
+            case 'presailer':
+                return 'პრისეილერი';
+            case 'contragent':
+                return 'კონტრაგენტი';
+            default:
+                return role;
+        }
+    }
+
     useEffect(() => {
         if (!userRole) {
             defaultInstance.get('/user', {
@@ -60,7 +75,7 @@ const Users = () => {
                     contragentEmail: user.profile?.contact_email || '',
                     email: user.email,
                     password: '********',
-                    role: user.role,
+                    role: getRoleLabel(user.role),
                     actions: '',
                 })));
             });

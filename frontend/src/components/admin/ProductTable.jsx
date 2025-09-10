@@ -201,7 +201,12 @@ const ProductTable = () => {
             setDeleteModalOpen(false)
             setRowToDelete(null)
         } catch (error) {
-            console.error('Error deleting product:', error)
+            if (error.response && error.response.status === 403) {
+                setDeleteModalOpen(false)
+                toast.error('თქვენ არ გაქვთ უფლება წაშალოთ ეს პროდუქტი!');
+            } else {
+                console.error('Error deleting product:', error)
+            }
         }
 
     }

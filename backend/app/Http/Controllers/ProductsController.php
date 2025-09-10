@@ -111,9 +111,14 @@ class ProductsController extends Controller
         return response()->json($product);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $product = Products::findOrFail($id);
+        $user = $request->user();
+
+        if ($user->role !== 'admin' && $product->user_id !== $user->id) {
+            return response()->json(['message' => 'You are not authorized to delete this product'], 403);
+        }
 
         $images = [];
         if ($product->image) {
@@ -125,8 +130,8 @@ class ProductsController extends Controller
         }
 
         foreach ($images as $imagePath) {
-            if (File::exists(public_path($imagePath))) {
-                File::delete(public_path($imagePath));
+            if (\Illuminate\Support\Facades\File::exists(public_path($imagePath))) {
+                \Illuminate\Support\Facades\File::delete(public_path($imagePath));
             }
         }
 

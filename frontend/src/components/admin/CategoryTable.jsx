@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import product from '../../assets/css/ProductPage.module.css'
 import Table from './Table'
 import Edit from './Edit'
@@ -6,8 +7,7 @@ import DeleteModal from './DeleteModal'
 import ImagePreviewModal from './ImagePreviewModal'
 import { IoIosAdd } from "react-icons/io";
 import defaultInstance from '../../api/defaultInstance'
-import axios from 'axios'
-
+import { toast } from "react-toastify";
 
 const CategoryTable = () => {
     const [modalOpen, setModalOpen] = useState(false)
@@ -98,7 +98,8 @@ const CategoryTable = () => {
             ))
             setModalOpen(false)
         } catch (error) {
-            console.error('Error updating category:', error)
+            setModalOpen(false)
+            toast.error('Error updating category: ' + (error.response?.data?.message || error.message))
         }
     }
 
@@ -114,8 +115,10 @@ const CategoryTable = () => {
             setCategories(categories.filter(cat => cat.id !== rowToDelete.id));
             setDeleteModalOpen(false);
             setRowToDelete(null);
+            toast.success('კატეგორია წარმატებით წაიშალა!');
         } catch (error) {
-            console.error('Error deleting category:', error);
+            setDeleteModalOpen(false);
+            toast.error('თქვენ არ გაქვთ უფლება წაშალოთ ეს კატეგორია!');
         }
     }
 
@@ -175,12 +178,12 @@ const CategoryTable = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
             setAddModalOpen(false)
             setAddForm({ name: '', image: '' })
+            toast.success('კატეგორია წარმატებით დაემატა!')
         } catch (error) {
-            console.error('Error:', error)
-            alert('Error: ' + (error.response?.data?.message || error.message))
+            setAddModalOpen(false)
+            toast.error('Error: ' + (error.response?.data?.message || error.message))
         }
     }
 

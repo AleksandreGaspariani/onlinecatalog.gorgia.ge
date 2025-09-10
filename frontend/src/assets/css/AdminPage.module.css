@@ -118,12 +118,14 @@
 .adminTableWrapper {
     width: 100%;
     background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 61, 102, 0.08), 0 1.5px 4px rgba(0, 0, 0, 0.03);
     border: 1px solid #e0e5eb;
     margin-bottom: 32px;
     padding-bottom: 0;
     position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
 }
 
 .adminTableInner {
@@ -131,6 +133,7 @@
     min-width: 0;
     width: 100%;
     overflow-x: auto;
+    background: #fff;
 }
 
 .adminTableHeader {
@@ -143,6 +146,7 @@
 .adminTableHeaderRow {
     display: flex;
     width: 100%;
+    border-radius: 0;
 }
 
 .adminTableRow {
@@ -152,26 +156,29 @@
     min-height: 48px;
     box-sizing: border-box;
     white-space: nowrap;
+    transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .adminTableHeaderRow {
-    font-weight: 600;
+    font-weight: 700;
     color: #003d66;
-    font-size: 15px;
+    font-size: 15.5px;
     background: #f5f5fa;
-    border-bottom: 1px solid #e0e5eb;
-    min-height: 48px;
+    border-bottom: 2px solid #e0e5eb;
+    min-height: 52px;
     align-items: center;
-    border-radius: 12px 12px 0 0;
+    border-radius: 16px 16px 0 0;
     white-space: nowrap;
+    letter-spacing: 0.02em;
 }
 
 .adminTableHeaderRow .adminTableCell {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-weight: 600;
+    font-weight: 700;
     background: #f5f5fa;
+    color: #003d66;
 }
 
 .adminTableRow .adminTableCell {
@@ -179,16 +186,17 @@
     word-break: break-word;
     overflow: visible;
     text-overflow: unset;
+    background: transparent;
 }
 
 .adminTableCell {
     flex: 1 1 0;
-    padding: 12px 16px;
+    padding: 14px 18px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
     background: transparent;
-    font-size: 15px;
+    font-size: 15.2px;
     color: #003d66;
     border-right: 1px solid #e0e5eb;
     white-space: normal;
@@ -198,6 +206,7 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .adminTableCell:last-child {
@@ -205,7 +214,7 @@
 }
 
 .adminTableBody {
-    max-height: 320px;
+    max-height: 340px;
     overflow-y: auto;
     overflow-x: auto;
     width: 100%;
@@ -213,11 +222,45 @@
 }
 
 .adminTableRow:not(.adminTableHeaderRow):hover {
-    background: #f0f4fa;
+    background: #eaf3fa;
+    box-shadow: 0 2px 8px rgba(0, 61, 102, 0.04);
+    z-index: 1;
 }
 
 .adminTableRow:last-child {
     border-bottom: none;
+}
+
+/* Action buttons in table */
+.adminTableCell button {
+    background: #f5f5fa;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 10px;
+    cursor: pointer;
+    transition: background 0.18s, box-shadow 0.18s;
+    color: #1976d2;
+    font-size: 17px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0, 61, 102, 0.04);
+}
+
+.adminTableCell button:hover {
+    background: #e0e5eb;
+    color: #005b8a;
+    box-shadow: 0 2px 8px rgba(0, 61, 102, 0.08);
+}
+
+.adminTableCell button[title="Delete"] {
+    background: #ffeaea;
+    color: #d32f2f;
+}
+
+.adminTableCell button[title="Delete"]:hover {
+    background: #ffd6d6;
+    color: #a31515;
 }
 
 ::-webkit-scrollbar {

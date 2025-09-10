@@ -58,9 +58,14 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
-    public function destroy($id)
+    public function destroy($id, Request $request)
     {
         $category = Category::findOrFail($id);
+        $user = $request->user();
+
+        if ($user->role !== 'admin' && $category->user_id !== $user->id) {
+            return response()->json(['message' => 'You are not authorized to delete this category'], 403);
+        }
 
         if ($category->attachment && File::exists(public_path($category->attachment))) {
             File::delete(public_path($category->attachment));

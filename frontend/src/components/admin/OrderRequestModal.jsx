@@ -14,22 +14,23 @@ const OrderRequestModal = ({ open, onClose, row }) => {
         onClose()
     }
 
+    if (!row) return null;
+
     return (
         <Modal open={open} onClose={onClose} title="დეტალები">
             <div className={styles.orderModalHeader}>
                 <div className={styles.orderModalTitle}>
-                    შიდერი ONDULINE ZIGANA წითელი-მაგში
+                    {row.numerologicalName}
                 </div>
                 <div className={styles.orderModalCode}>
-                    კოდი: BM-00038609
+                    კოდი: {row.bmCode}
                 </div>
                 <div className={styles.orderModalDesc}>
                     აღწერა:<br />
-                    ფასი საქონლის გადამოწმების შემდეგ ოპერატორიდან<br />
-                    მიწოდების ვადა: თურქეთი
+                    {row.description}
                 </div>
                 <div className={styles.orderModalQty}>
-                    რაოდენობა შეკვეთაში: 1
+                    რაოდენობა შეკვეთაში: {row.quantity}
                 </div>
                 <div className={styles.orderModalNote}>
                     თუ სტატუსი არ განახლდება მარაგი არ არის.

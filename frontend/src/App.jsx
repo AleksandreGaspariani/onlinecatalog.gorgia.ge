@@ -1,5 +1,7 @@
 import React from 'react'
 import './App.css'
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import { Route, Routes, BrowserRouter, Outlet, useLocation } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import store from './redux/store'
@@ -72,6 +74,17 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+        <ToastContainer
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
         <Routes>
           {profileIncomplete ? (
             <Route path="*" element={<AdminPage />} />
