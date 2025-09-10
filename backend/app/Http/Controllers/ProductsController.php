@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Models\Products;
 use Illuminate\Support\Facades\File;
+use App\Models\Category;
 
 class ProductsController extends Controller
 {
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'category_id' => 'nullable|integer|exists:category,id',
+            'category_id' => 'nullable|string|max:255',
             'category' => 'nullable|string|max:255',
             'numerologicalName' => 'nullable|string|max:255',
             'price' => 'nullable|numeric',
@@ -21,10 +22,17 @@ class ProductsController extends Controller
             'size' => 'nullable|string|max:255',
             'packageCount' => 'nullable|integer',
             'manufacturer' => 'nullable|string|max:255',
-            'annotation' => 'nullable|string',
+            'annotation' => 'nullable',
             'image' => 'nullable',
             'image.*' => 'file|image|max:2048',
         ]);
+
+        if ($request->input('category_id')) {
+            $exists = Category::where('group_id', $request->input('category_id'))->exists();
+            if (!$exists) {
+                return response()->json(['error' => 'Invalid category_id'], 400);
+            }
+        }
 
         $imagePaths = [];
         if ($request->hasFile('image')) {
@@ -76,7 +84,7 @@ class ProductsController extends Controller
             'size' => 'nullable|string|max:255',
             'packageCount' => 'nullable|integer',
             'manufacturer' => 'nullable|string|max:255',
-            'annotation' => 'nullable|string',
+            'annotation' => 'nullable',
             'image' => 'nullable|file|image|max:2048',
         ]);
 
@@ -128,6 +136,31 @@ class ProductsController extends Controller
     public function show($id)
     {
         $product = Products::findOrFail($id);
+        return response()->json($product);
+    }
+
+    public function updateWithImages(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'nullable|array',
+            'image.*' => 'file|image|max:2048',
+        ]);
+
+        $product = Products::findOrFail($id);
+
+        if ($request->hasFile('image')) {
+            $images = $request->file('image');
+            $imagePaths = [];
+
+            foreach ($images as $file) {
+                $path = $file->store('products', 'public');
+                $imagePaths[] = 'storage/' . $path;
+            }
+
+            $product->image = json_encode($imagePaths);
+        }
+
+        $product->save();
         return response()->json($product);
     }
 }

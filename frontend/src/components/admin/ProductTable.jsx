@@ -7,6 +7,8 @@ import DeleteModal from './DeleteModal'
 import ImagePreviewModal from './ImagePreviewModal'
 import { IoIosAdd } from "react-icons/io";
 import defaultInstance from '../../api/defaultInstance'
+import axios from 'axios'
+import { toast } from "react-toastify";
 
 const ProductTable = () => {
     const [modalOpen, setModalOpen] = useState(false)
@@ -20,6 +22,7 @@ const ProductTable = () => {
     const [imageIdToPreview, setImageIdToPreview] = useState(null)
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
+    const [editImageFiles, setEditImageFiles] = useState(null)
 
     useEffect(() => {
         defaultInstance.get('/products')
@@ -107,6 +110,66 @@ const ProductTable = () => {
         })
     }
 
+    const handleProduct1cSubmit = async e => {
+        e.preventDefault();
+        if (!productCode) return;
+
+        try {
+            const response = await axios.post('https://back.gorgia.ge/api/online_catalog/product', {
+                token: '$2y$12$dyqm74uwPn/FE674dAwba.fWgwMLcPI5ip4dSTNcH2neDl1Jk0Fni',
+                bm_code: productCode
+            });
+            const data = response.data?.data?.Items?.[0];
+            if (data) {
+                const getReq = name =>
+                    (data.Requisites || []).find(r => r.Name === name)?.Value ?? '';
+
+                const sizeValue = getReq('წონა (ნეტო)');
+                const itemsGroups = response.data?.data?.ItemsGroups;
+                const lastGroup = Array.isArray(itemsGroups) && itemsGroups.length > 0
+                    ? itemsGroups[itemsGroups.length - 1]
+                    : null;
+                const mappedProduct = {
+                    category_id: lastGroup ? lastGroup.ID : '',
+                    category: lastGroup ? lastGroup.Name : '',
+                    numerologicalName: getReq('დასახელება'),
+                    price: response.data?.data?.price ?? '',
+                    bmCode: getReq('კოდი'),
+                    article: getReq('არტიკული'),
+                    barcode: getReq('ძირითადი შტრიხ-კოდი'),
+                    size: typeof sizeValue === 'undefined' || sizeValue === null ? '' : String(sizeValue),
+                    packageCount: null,
+                    manufacturer: getReq('მწარმოებელი'),
+                    annotation: null,
+                    image: null
+                };
+
+                try {
+                    await defaultInstance.post('/products', mappedProduct);
+                    defaultInstance.get('/products')
+                        .then(res => setProducts(res.data))
+                        .catch(error => console.error('Error fetching products:', error));
+                } catch (err) {
+                    if (err.response?.data?.error === "Invalid category_id") {
+                        toast.error("ასეთი კატეგორია არ არსებობს!");
+                    } else {
+                        toast.error("პროდუქტის დამატების შეცდომა!");
+                    }
+                    setModal1cOpen(false);
+                    setProductCode('');
+                    return;
+                }
+            }
+            setModal1cOpen(false);
+            setProductCode('');
+        } catch (error) {
+            console.error('Error fetching product from 1c:', error);
+            toast.error('პროდუქტის კოდი არ მოიძებნა!');
+            setModal1cOpen(false);
+            setProductCode('');
+        }
+    }
+
     const handleEdit = (row) => {
         setEditForm({
             id: row.id || '',
@@ -151,12 +214,27 @@ const ProductTable = () => {
         e.preventDefault()
 
         try {
-            await defaultInstance.put(`/products/${editForm.id}`, editForm)
-            const updatedProducts = products.map(p =>
-                p.id === editForm.id ? { ...p, ...editForm } : p
-            )
-            setProducts(updatedProducts)
-            setEditModalOpen(false)
+            let dataToSend = { ...editForm }
+
+            if (editImageFiles && editImageFiles.length > 0) {
+                const formData = new FormData();
+                Object.entries(editForm).forEach(([key, value]) => {
+                    formData.append(key, value);
+                });
+                Array.from(editImageFiles).forEach(file => {
+                    formData.append('image[]', file);
+                });
+
+                await defaultInstance.post(`/products/${editForm.id}/update-with-images`, formData, {
+                    headers: { 'Content-Type': 'multipart/form-data' }
+                });
+            } else {
+                await defaultInstance.put(`/products/${editForm.id}`, dataToSend);
+            }
+            const res = await defaultInstance.get('/products');
+            setProducts(res.data);
+            setEditModalOpen(false);
+            setEditImageFiles(null);
         } catch (error) {
             console.error('Error updating product:', error)
         }
@@ -329,17 +407,24 @@ const ProductTable = () => {
         { label: 'პაკეტის რაოდენობა', type: 'text', name: 'packageCount', value: editForm.packageCount, onChange: handleEditChange },
         { label: 'მწარმოებელი', type: 'text', name: 'manufacturer', value: editForm.manufacturer, onChange: handleEditChange },
         { label: 'ანოტაცია', type: 'text', name: 'annotation', value: editForm.annotation, onChange: handleEditChange },
-    ]
+        {
+            label: 'ახალი სურათები',
+            type: 'file',
+            name: 'editImages',
+            value: undefined,
+            onChange: e => setEditImageFiles(e.target.files),
+            multiple: true,
+        }]
 
     return (
         <>
-            <button
+            {/* <button
                 className={product.addProductBtn}
                 onClick={() => setModalOpen(true)}
             >
                 <IoIosAdd fontSize="20px" color='#fff' />
                 პროდუქტის დამატება
-            </button>
+            </button> */}
             <button
                 className={product.addProductBtn}
                 onClick={() => setModal1cOpen(true)}
@@ -360,7 +445,7 @@ const ProductTable = () => {
                 onClose={() => setModal1cOpen(false)}
                 title="პროდუქტის დამატება 1c დან"
                 fields={product1cFields}
-                onSubmit={handleProductSubmit}
+                onSubmit={handleProduct1cSubmit}
                 submitLabel="დამატება"
             />
             <Table
@@ -383,7 +468,7 @@ const ProductTable = () => {
                 onClose={() => setDeleteModalOpen(false)}
                 onConfirm={handleDeleteConfirm}
                 title="წაშლის დადასტურება"
-                message={rowToDelete ? `ნამდვილად გსურთ წაშალოთ პროდუქტი: ${rowToDelete.numerologicalName}?` : ''}
+                message={rowToDelete ? `ნამდვილად გსურთ წაშალოთ პროდუქტი: ${rowToDelete.numerologicalName} ? ` : ''}
             />
             <ImagePreviewModal
                 open={imageModalOpen}

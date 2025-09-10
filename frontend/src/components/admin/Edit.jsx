@@ -122,6 +122,19 @@ const Edit = ({
             );
         }
 
+        if (field.type === 'file') {
+            return (
+                <input
+                    id={field.name}
+                    name={field.name}
+                    type="file"
+                    onChange={field.onChange}
+                    className={product.modalFormInput}
+                    multiple={field.multiple}
+                />
+            );
+        }
+
         return (
             <input
                 id={field.name}

@@ -24,6 +24,7 @@ export default function Login() {
 
       const user = response.data.user;
       dispatch(setUser(user));
+      console.log('User logged in:', user);
 
       window.location.replace('/');
     } catch (err) {

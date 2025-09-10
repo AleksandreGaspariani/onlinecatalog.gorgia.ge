@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux'
 import styles from '../../assets/css/AdminPage.module.css'
 import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom'
 import CategoryTable from './CategoryTable'
-import ProductTable from './ProductTable'
+import ProductsTable from './ProductTable';
 import OrderRequest from './OrderRequestTable'
 import Orders from './OrdersTable'
 import Profile from './ProfileTable'
@@ -17,7 +17,7 @@ const AdminPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const navigate = useNavigate()
     const location = useLocation()
-    const role = useSelector(state => state.user.role)
+    const role = useSelector(state => state.user.role);
     const currentPath = location.pathname
 
     const sidebarItems = [
@@ -32,9 +32,7 @@ const AdminPage = () => {
         { label: 'შეკვეთების მოთხოვნები', key: 'requests', icon: <FaClipboardList />, path: '/admin/requests' },
         { label: 'შეკვეთები', key: 'orders', icon: <FaShoppingCart />, path: '/admin/orders' },
         { label: 'პროფილი', key: 'profile', icon: <FaUserCircle />, path: '/admin/profile' },
-        ...(role && role !== 'contragent'
-            ? [{ label: 'მომხმარებლები', key: 'users', icon: <FaUsers />, path: '/admin/users' }]
-            : [])
+        { label: 'მომხმარებლები', key: 'users', icon: <FaUsers />, path: '/admin/users' }
     ];
 
     const handleLogout = async () => {
@@ -111,7 +109,7 @@ const AdminPage = () => {
                         element={
                             role === 'contragent'
                                 ? <Navigate to="/admin/profile" replace />
-                                : <Users />
+                                : <CategoryTable />
                         }
                     />
                     <Route
@@ -119,17 +117,13 @@ const AdminPage = () => {
                         element={
                             role === 'contragent'
                                 ? <Navigate to="/admin/profile" replace />
-                                : <Users />
+                                : <ProductsTable />
                         }
                     />
                     <Route path="requests" element={<OrderRequest />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="profile" element={<Profile />} />
-                    <Route path="users" element={
-                        role === 'contragent'
-                            ? <Navigate to="/admin/profile" replace />
-                            : <Users />
-                    } />
+                    <Route path="users" element={<Users />} />
                     <Route index element={<CategoryTable />} />
                 </Routes>
             </main>
