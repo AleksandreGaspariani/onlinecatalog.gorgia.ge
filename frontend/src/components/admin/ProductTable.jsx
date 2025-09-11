@@ -23,16 +23,20 @@ const ProductTable = () => {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [editImageFiles, setEditImageFiles] = useState(null)
+    const [showMyProducts, setShowMyProducts] = useState(false)
 
     useEffect(() => {
-        defaultInstance.get('/products')
-            .then(res => {
-                setProducts(res.data)
-            })
-            .catch(error => {
-                console.error('Error fetching products:', error)
-            })
-    }, [])
+        const fetchProducts = async () => {
+            try {
+                const url = showMyProducts ? '/products?mine=1' : '/products';
+                const res = await defaultInstance.get(url);
+                setProducts(res.data);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+        fetchProducts();
+    }, [showMyProducts])
 
     useEffect(() => {
         defaultInstance.get('/categories')
@@ -124,7 +128,19 @@ const ProductTable = () => {
                 const getReq = name =>
                     (data.Requisites || []).find(r => r.Name === name)?.Value ?? '';
 
-                const sizeValue = getReq('წონა (ნეტო)');
+                const packages = data.Packages || [];
+                const piecePackage = packages.find(p => p.Name.includes('ცალი'));
+                let packageCountValue = '';
+                if (piecePackage) {
+                    packageCountValue = piecePackage.Coefficient;
+                }
+
+                const AdditionalRequisites = data.AdditionalRequisites || [];
+                const lengthObj = AdditionalRequisites.find(p => p.Name.includes('სიგრძე'));
+                const widthObj = AdditionalRequisites.find(p => p.Name.includes('სიგანე'));
+                const lengthValue = lengthObj ? String(lengthObj.Value) : '';
+                const widthValue = widthObj ? String(widthObj.Value) : '';
+
                 const itemsGroups = response.data?.data?.ItemsGroups;
                 const lastGroup = Array.isArray(itemsGroups) && itemsGroups.length > 0
                     ? itemsGroups[itemsGroups.length - 1]
@@ -137,8 +153,8 @@ const ProductTable = () => {
                     bmCode: getReq('კოდი'),
                     article: getReq('არტიკული'),
                     barcode: getReq('ძირითადი შტრიხ-კოდი'),
-                    size: typeof sizeValue === 'undefined' || sizeValue === null ? '' : String(sizeValue),
-                    packageCount: null,
+                    size: lengthValue && widthValue ? `სიგრძე: ${lengthValue} სიგანე: ${widthValue}` : lengthValue || widthValue || '',
+                    packageCount: packageCountValue,
                     manufacturer: getReq('მწარმოებელი'),
                     annotation: null,
                     image: null
@@ -151,9 +167,9 @@ const ProductTable = () => {
                         .catch(error => console.error('Error fetching products:', error));
                 } catch (err) {
                     if (err.response?.data?.error === "Invalid category_id") {
-                        toast.error("ასეთი კატეგორია არ არსებობს!");
+                        toast.error(`ეს კატეგორია (${mappedProduct.category}) არ არის მატაბელი!`);
                     } else {
-                        toast.error("პროდუქტის დამატების შეცდომა!");
+                        toast.error(`პროდუქტის დამატებისას მოხდა შეცდომა: ${err.response?.data?.error || err.message}`);
                     }
                     setModal1cOpen(false);
                     setProductCode('');
@@ -200,6 +216,7 @@ const ProductTable = () => {
             setProducts(products.filter(p => p.id !== rowToDelete.id))
             setDeleteModalOpen(false)
             setRowToDelete(null)
+            toast.success('პროდუქტი წარმატებით წაიშალა!');
         } catch (error) {
             if (error.response && error.response.status === 403) {
                 setDeleteModalOpen(false)
@@ -275,7 +292,11 @@ const ProductTable = () => {
         { header: 'არტიკული', accessor: 'article' },
         { header: 'შტრიხკოდი', accessor: 'barcode' },
         { header: 'ზომა', accessor: 'size' },
-        { header: 'პაკეტის რაოდენობა', accessor: 'packageCount' },
+        {
+            header: 'პაკეტის რაოდენობა',
+            accessor: 'packageCount',
+            cell: row => row.packageCount ? `ცალი: ${row.packageCount}` : '-',
+        },
         { header: 'მწარმოებელი', accessor: 'manufacturer' },
         { header: 'ანოტაცია', accessor: 'annotation' },
         {
@@ -423,20 +444,33 @@ const ProductTable = () => {
 
     return (
         <>
-            {/* <button
-                className={product.addProductBtn}
-                onClick={() => setModalOpen(true)}
-            >
-                <IoIosAdd fontSize="20px" color='#fff' />
-                პროდუქტის დამატება
-            </button> */}
-            <button
-                className={product.addProductBtn}
-                onClick={() => setModal1cOpen(true)}
-            >
-                <IoIosAdd fontSize="20px" color='#fff' />
-                პროდუქტის დამატება 1c დან
-            </button>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div>
+                    <button
+                        className={product.addProductBtn}
+                        onClick={() => setModal1cOpen(true)}
+                    >
+                        <IoIosAdd fontSize="20px" color='#fff' />
+                        პროდუქტის დამატება 1c დან
+                    </button>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }} >
+                    <button
+                        className={product.addProductBtn}
+                        style={{ background: showMyProducts ? '#eee' : '#017dbe', color: showMyProducts ? '#333' : '#fff' }}
+                        onClick={() => setShowMyProducts(false)}
+                    >
+                        ყველა პროდუქტი
+                    </button>
+                    <button
+                        className={product.addProductBtn}
+                        style={{ background: showMyProducts ? '#017dbe' : '#eee', color: showMyProducts ? '#fff' : '#333' }}
+                        onClick={() => setShowMyProducts(true)}
+                    >
+                        ჩემი პროდუქცია
+                    </button>
+                </div>
+            </div>
             <Modal
                 open={modalOpen}
                 onClose={() => setModalOpen(false)}

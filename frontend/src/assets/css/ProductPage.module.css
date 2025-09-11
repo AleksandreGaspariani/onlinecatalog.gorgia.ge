@@ -9,7 +9,6 @@
     color: #ffffff;
     font-size: 0.75rem;
     line-height: 1rem;
-    font-weight: 700;
     cursor: pointer;
     text-align: center;
     text-transform: uppercase;
@@ -21,6 +20,7 @@
     box-shadow: 0 4px 6px -1px #488aec31, 0 2px 4px -1px #488aec17;
     transition: all 0.6s ease;
     margin-bottom: 15px;
+    min-height: 45px;
 }
 
 .addProductBtn:hover {

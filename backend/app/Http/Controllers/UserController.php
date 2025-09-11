@@ -10,6 +10,13 @@ class UserController extends Controller
 {
     public function index()
     {
+        $user = request()->user();
+
+        if ($user->role === 'admin') {
+            return User::with('profile')->get();
+        } else if ($user->role === 'presailer') {
+            return User::with('profile')->where('user_id', $user->id)->get();
+        }
         return User::with('profile')->get();
     }
 

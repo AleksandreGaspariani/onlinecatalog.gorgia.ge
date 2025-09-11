@@ -69,7 +69,15 @@ class ProductsController extends Controller
 
     public function index()
     {
-        $products = Products::all();
+        $user = request()->user();
+        $mine = request()->query('mine');
+        if ($mine && $user) {
+            $products = Products::where('user_id', $user->id)->get();
+        } elseif ($user && $user->role === 'contragent') {
+            $products = Products::where('user_id', $user->user_id)->get();
+        } else {
+            $products = Products::all();
+        }
         return response()->json($products);
     }
 

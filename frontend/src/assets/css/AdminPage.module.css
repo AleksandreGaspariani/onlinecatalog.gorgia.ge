@@ -115,181 +115,154 @@
     min-height: 100vh;
 }
 
+/* AdminPage.module.css */
 .adminTableWrapper {
     width: 100%;
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0, 61, 102, 0.08), 0 1.5px 4px rgba(0, 0, 0, 0.03);
-    border: 1px solid #e0e5eb;
-    margin-bottom: 32px;
-    padding-bottom: 0;
-    position: relative;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 61, 102, 0.1), 0 2px 6px rgba(0, 61, 102, 0.05);
+    border: 1px solid #e8ecef;
+    margin-bottom: 24px;
     overflow: hidden;
-    transition: box-shadow 0.2s;
+    transition: all 0.3s ease;
+}
+
+.adminTableWrapper:hover {
+    box-shadow: 0 6px 24px rgba(0, 61, 102, 0.15), 0 3px 8px rgba(0, 61, 102, 0.08);
 }
 
 .adminTableInner {
-    display: block;
-    min-width: 0;
     width: 100%;
     overflow-x: auto;
-    background: #fff;
-}
-
-.adminTableHeader {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-}
-
-.adminTableRow,
-.adminTableHeaderRow {
-    display: flex;
-    width: 100%;
-    border-radius: 0;
+    background: #ffffff;
 }
 
 .adminTableRow {
-    background: #fff;
-    border-bottom: 1px solid #e0e5eb;
-    align-items: center;
-    min-height: 48px;
-    box-sizing: border-box;
-    white-space: nowrap;
-    transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 56px;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f0f2f5;
 }
 
 .adminTableHeaderRow {
-    font-weight: 700;
-    color: #003d66;
-    font-size: 15.5px;
-    background: #f5f5fa;
-    border-bottom: 2px solid #e0e5eb;
-    min-height: 52px;
-    align-items: center;
-    border-radius: 16px 16px 0 0;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-}
-
-.adminTableHeaderRow .adminTableCell {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 700;
-    background: #f5f5fa;
-    color: #003d66;
-}
-
-.adminTableRow .adminTableCell {
-    white-space: normal;
-    word-break: break-word;
-    overflow: visible;
-    text-overflow: unset;
-    background: transparent;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    font-weight: 600;
+    color: #1e3a8a;
+    font-size: 14px;
+    min-height: 48px;
+    border-bottom: 2px solid #e2e8f0;
+    border-radius: 12px 12px 0 0;
 }
 
 .adminTableCell {
     flex: 1 1 0;
-    padding: 14px 18px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    background: transparent;
-    font-size: 15.2px;
-    color: #003d66;
-    border-right: 1px solid #e0e5eb;
+    font-size: 14px;
+    color: #2d3748;
+    border-right: 1px solid #f0f2f5;
     white-space: normal;
     word-break: break-word;
     overflow: visible;
     text-overflow: unset;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: background 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.adminTableCell:first-child {
+    border-left: none;
 }
 
 .adminTableCell:last-child {
     border-right: none;
 }
 
-.adminTableBody {
-    max-height: 340px;
-    overflow-y: auto;
-    overflow-x: auto;
-    width: 100%;
-    display: block;
+.headerCell {
+    font-weight: 600;
+    color: #1e3a8a;
+    white-space: normal;
+    word-break: break-word;
+    overflow: visible;
+    text-overflow: unset;
+    min-width: 100px;
+    border-right: 1px solid #f0f2f5;
+    border-left: 1px solid #f0f2f5;
+    box-sizing: border-box;
 }
 
-.adminTableRow:not(.adminTableHeaderRow):hover {
-    background: #eaf3fa;
-    box-shadow: 0 2px 8px rgba(0, 61, 102, 0.04);
-    z-index: 1;
+.headerCell:first-child {
+    border-left: none;
 }
 
-.adminTableRow:last-child {
-    border-bottom: none;
+.headerCell:last-child {
+    border-right: none;
 }
 
-/* Action buttons in table */
-.adminTableCell button {
-    background: #f5f5fa;
-    border: none;
-    border-radius: 6px;
-    padding: 7px 10px;
-    cursor: pointer;
-    transition: background 0.18s, box-shadow 0.18s;
-    color: #1976d2;
-    font-size: 17px;
-    display: inline-flex;
+.adminTableRow.tableRow:hover {
+    background: #f8fafc;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 61, 102, 0.06);
+}
+
+/* Action Buttons */
+.actionButtons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.actionButton {
+    display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 2px rgba(0, 61, 102, 0.04);
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 61, 102, 0.1);
 }
 
-.adminTableCell button:hover {
-    background: #e0e5eb;
-    color: #005b8a;
-    box-shadow: 0 2px 8px rgba(0, 61, 102, 0.08);
+.editButton {
+    background: #e6f0fa;
+    color: #2563eb;
 }
 
-.adminTableCell button[title="Delete"] {
-    background: #ffeaea;
-    color: #d32f2f;
+.editButton:hover {
+    background: #dbe9fd;
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 61, 102, 0.15);
 }
 
-.adminTableCell button[title="Delete"]:hover {
-    background: #ffd6d6;
-    color: #a31515;
+.deleteButton {
+    background: #fef2f2;
+    color: #dc2626;
 }
 
+.deleteButton:hover {
+    background: #fee2e2;
+    transform: scale(1.05);
+    box-shadow: 0 3px 6px rgba(0, 61, 102, 0.15);
+}
+
+/* Scrollbar */
 ::-webkit-scrollbar {
-    height: 8px;
-    background: #f5f5fa;
+    height: 6px;
+    width: 6px;
+    background: #f1f5f9;
     border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #e0e5eb;
+    background: #cbd5e1;
     border-radius: 8px;
 }
 
-.sidebarToggleBtn {
-    background: none;
-    border: none;
-    font-size: 26px;
-    color: #003d66;
-    cursor: pointer;
-    margin-left: 12px;
-    margin-right: 12px;
-    margin-bottom: 0;
-    margin-top: 0;
-    padding: 0;
-    outline: none;
-    transition: background 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 38px;
-    width: 38px;
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }

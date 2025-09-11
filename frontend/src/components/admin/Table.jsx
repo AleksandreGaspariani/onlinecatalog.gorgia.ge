@@ -3,20 +3,11 @@ import styles from '../../assets/css/AdminPage.module.css'
 import { FaEdit, FaTrash } from 'react-icons/fa'
 
 const Table = ({ columns, data, onEdit, onDelete }) => {
-
     const renderActions = (row) => (
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+        <div className={styles.actionButtons}>
             {onEdit && (
                 <button
-                    style={{
-                        background: '#e0e5eb',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '6px 8px',
-                        cursor: 'pointer',
-                        transition: 'background 0.2s',
-                        color: '#1976d2'
-                    }}
+                    className={`${styles.actionButton} ${styles.editButton}`}
                     title="Edit"
                     onClick={() => onEdit(row)}
                 >
@@ -25,15 +16,7 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
             )}
             {onDelete && (
                 <button
-                    style={{
-                        background: '#ffeaea',
-                        border: 'none',
-                        borderRadius: '4px',
-                        padding: '6px 8px',
-                        cursor: 'pointer',
-                        transition: 'background 0.2s',
-                        color: '#d32f2f'
-                    }}
+                    className={`${styles.actionButton} ${styles.deleteButton}`}
                     title="Delete"
                     onClick={() => onDelete(row)}
                 >
@@ -48,11 +31,13 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
             <div className={styles.adminTableInner}>
                 <div className={`${styles.adminTableRow} ${styles.adminTableHeaderRow}`}>
                     {columns.map((col, idx) => (
-                        <div className={styles.adminTableCell} key={idx}>{col.header}</div>
+                        <div className={styles.adminTableCell} key={idx}>
+                            {col.header}
+                        </div>
                     ))}
                 </div>
                 {data.map((row, rowIdx) => (
-                    <div className={styles.adminTableRow} key={rowIdx}>
+                    <div className={`${styles.adminTableRow} ${styles.tableRow}`} key={rowIdx}>
                         {columns.map((col, colIdx) => (
                             <div className={styles.adminTableCell} key={colIdx}>
                                 {col.cell

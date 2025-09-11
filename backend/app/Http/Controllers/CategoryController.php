@@ -33,7 +33,18 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::all();
+        $user = request()->user();
+
+        if ($user && $user->role === 'contragent') {
+            $categoryIds = \App\Models\Products::where('user_id', $user->user_id)
+                ->pluck('category_id')
+                ->unique()
+                ->toArray();
+
+            $categories = Category::whereIn('group_id', $categoryIds)->get();
+        } else {
+            $categories = Category::all();
+        }
         return response()->json($categories);
     }
 
