@@ -32,7 +32,12 @@ const AdminPage = () => {
         { label: 'შეკვეთების მოთხოვნები', key: 'requests', icon: <FaClipboardList />, path: '/admin/requests' },
         { label: 'შეკვეთები', key: 'orders', icon: <FaShoppingCart />, path: '/admin/orders' },
         { label: 'პროფილი', key: 'profile', icon: <FaUserCircle />, path: '/admin/profile' },
-        { label: 'მომხმარებლები', key: 'users', icon: <FaUsers />, path: '/admin/users' }
+        ...(role && role !== 'contragent'
+            ? [
+                { label: 'მომხმარებლები', key: 'users', icon: <FaUsers />, path: '/admin/users' }
+            ]
+            : []
+        ),
     ];
 
     const handleLogout = async () => {
@@ -123,7 +128,12 @@ const AdminPage = () => {
                     <Route path="requests" element={<OrderRequest />} />
                     <Route path="orders" element={<Orders />} />
                     <Route path="profile" element={<Profile />} />
-                    <Route path="users" element={<Users />} />
+                    <Route path="users" element={
+                        role === 'contragent'
+                            ? <Navigate to="/admin/profile" replace />
+                            : <Users />
+                    }
+                    />
                     <Route index element={<CategoryTable />} />
                 </Routes>
             </main>

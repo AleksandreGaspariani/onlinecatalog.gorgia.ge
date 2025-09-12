@@ -80,7 +80,20 @@ class ProductsController extends Controller
         if ($mine && $user) {
             $products = Products::where('user_id', $user->id)->get();
         } elseif ($user && $user->role === 'contragent') {
-            $products = Products::where('user_id', $user->user_id)->get();
+            $categories = [];
+            if ($user->categories) {
+                $categories = json_decode($user->categories, true) ?? [];
+            }
+            // Get group_id values for these category IDs
+            $groupIds = [];
+            if (!empty($categories)) {
+                $groupIds = \App\Models\Category::whereIn('id', $categories)->pluck('group_id')->toArray();
+            }
+            if (!empty($groupIds)) {
+                $products = Products::whereIn('category_id', $groupIds)->get();
+            } else {
+                $products = collect();
+            }
         } else {
             $products = Products::all();
         }

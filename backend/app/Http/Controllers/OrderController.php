@@ -10,7 +10,13 @@ class OrderController extends Controller
     //
     public function index()
     {
-        $orders = Orders::with('user')->get();
+        $user = request()->user();
+        if ($user->role === 'contragent') {
+            $orders = Orders::with('user')->where('user_id', $user->id)->get();
+        } else {
+            $orders = Orders::with('user')->get();
+        }
+
         return response()->json(['orders' => $orders], 200);
     }
 
@@ -35,12 +41,6 @@ class OrderController extends Controller
         return response()->json(['success' => true, 'order' => $order], 201);
     }
 
-
-    public function show($id)
-    {
-        //
-    }
-
     public function update(Request $request, $id)
     {
         $order = Orders::findOrFail($id);
@@ -60,5 +60,13 @@ class OrderController extends Controller
         $order->update($validated);
 
         return response()->json(['success' => true, 'order' => $order], 200);
+    }
+
+    public function destroy($id)
+    {
+        $order = Orders::findOrFail($id);
+        $order->delete();
+
+        return response()->json(['success' => true], 200);
     }
 }

@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import Table from './Table'
 import defaultInstance from '../../api/defaultInstance'
 import Edit from './Edit'
+import DeleteModal from './DeleteModal'
+import { toast } from "react-toastify";
+
 
 const getOrderStatusLabel = (status) => {
     switch (status) {
@@ -41,6 +45,9 @@ const OrderRequest = () => {
     const [loading, setLoading] = useState(false)
     const [editOpen, setEditOpen] = useState(false)
     const [editRow, setEditRow] = useState(null)
+    const [deleteOpen, setDeleteOpen] = useState(false)
+    const [deleteRow, setDeleteRow] = useState(null)
+    const role = useSelector(state => state.user.role);
     const [editFields, setEditFields] = useState({
         email: '',
         phone: '',
@@ -66,6 +73,28 @@ const OrderRequest = () => {
         })
         setEditOpen(true)
     };
+
+    const handleDelete = (row) => {
+        setDeleteRow(row)
+        setDeleteOpen(true)
+    }
+
+    const handleDeleteConfirm = async () => {
+        if (!deleteRow) return
+        setLoading(true)
+        try {
+            await defaultInstance.delete(`/orders/${deleteRow.id}`)
+            setData(prev => prev.filter(order => order.id !== deleteRow.id))
+            toast.success("შეკვეთა წარმატებით წაიშალა")
+            // eslint-disable-next-line no-unused-vars
+        } catch (err) {
+            toast.error("შეკვეთის წაშლა ვერ მოხერხდა")
+        } finally {
+            setLoading(false)
+            setDeleteOpen(false)
+            setDeleteRow(null)
+        }
+    }
 
     const handleEditFieldChange = (e) => {
         setEditFields(prev => ({
@@ -98,9 +127,9 @@ const OrderRequest = () => {
             )
             setEditOpen(false)
             setEditRow(null)
-            // eslint-disable-next-line no-unused-vars
+            toast.success("შეკვეთის ინფორმაცია წარმატებით განახლდა");
         } catch (err) {
-            // handle error if needed
+            toast.error("შეკვეთის ინფორმაციის განახლება ვერ მოხერხდა");
         } finally {
             setLoading(false)
         }
@@ -121,7 +150,13 @@ const OrderRequest = () => {
 
     return (
         <>
-            <Table columns={columns} data={data} loading={loading} onEdit={handleEdit} />
+            <Table
+                columns={columns}
+                data={data}
+                loading={loading}
+                onEdit={handleEdit}
+                onDelete={role === 'admin' ? handleDelete : undefined}
+            />
             <Edit
                 open={editOpen}
                 onClose={() => setEditOpen(false)}
@@ -188,6 +223,13 @@ const OrderRequest = () => {
                 onSubmit={handleEditSubmit}
                 submitLabel="შენახვა"
                 splitColumns={true}
+            />
+            <DeleteModal
+                open={deleteOpen}
+                onClose={() => setDeleteOpen(false)}
+                onConfirm={handleDeleteConfirm}
+                title="შეკვეთის წაშლა"
+                message="ნამდვილად გსურთ ამ შეკვეთის წაშლა?"
             />
         </>
     )

@@ -211,9 +211,15 @@ const Product = () => {
           </div>
           {/* Second column */}
           <div className="product-details-col">
-            <p>სიგრძე: {productData && productData.length ? productData.length + ' მ' : '0.5 მ'}</p>
-            <p>სიგანე: {productData && productData.width ? productData.width + ' მ' : '0.57 მ'}</p>
-            <p>სიმაღლე: {productData && productData.height ? productData.height + ' მ' : '0.87 მ'}</p>
+            <p>
+              {productData && (productData.length || productData.size)
+                ? [
+                  productData.length ? `სიგრძე: ${productData.length} მ` : null,
+                  productData.size ? `${productData.size} მ` : null
+                ].filter(Boolean).join(' ')
+                : ''}
+            </p>
+            <p>სიმაღლე: {productData && productData.height ? productData.height + ' მ' : ''}</p>
           </div>
         </div>
       </div>
