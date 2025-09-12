@@ -156,7 +156,7 @@ const ProductTable = () => {
                     size: lengthValue && widthValue ? `სიგრძე: ${lengthValue} სიგანე: ${widthValue}` : lengthValue || widthValue || '',
                     packageCount: packageCountValue,
                     manufacturer: getReq('მწარმოებელი'),
-                    annotation: null,
+                    annotation: getReq('ტექსტური აღწერა'),
                     image: null
                 };
 
@@ -165,9 +165,12 @@ const ProductTable = () => {
                     defaultInstance.get('/products')
                         .then(res => setProducts(res.data))
                         .catch(error => console.error('Error fetching products:', error));
+                    toast.success('პროდუქტი წარმატებით დაემატა!');
                 } catch (err) {
                     if (err.response?.data?.error === "Invalid category_id") {
-                        toast.error(`ეს კატეგორია (${mappedProduct.category}) არ არის მატაბელი!`);
+                        toast.error(`ეს კატეგორია "${mappedProduct.category}" არ არის მატაბელი!`);
+                    } else if (err.response?.data?.error === "category_id must be unique") {
+                        toast.error(`ეს პროდუქტი "${mappedProduct.numerologicalName}" უკვე დამატებულია!`);
                     } else {
                         toast.error(`პროდუქტის დამატებისას მოხდა შეცდომა: ${err.response?.data?.error || err.message}`);
                     }

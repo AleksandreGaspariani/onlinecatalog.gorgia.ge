@@ -183,7 +183,11 @@ const CategoryTable = () => {
             toast.success('კატეგორია წარმატებით დაემატა!')
         } catch (error) {
             setAddModalOpen(false)
-            toast.error('Error: ' + (error.response?.data?.message || error.message))
+            if (error.response?.data?.error === "group_id must be unique") {
+                toast.error(`ეს კატეგორია "${addForm.name}" უკვე დამატებულია!`);
+                return;
+            }
+            toast.error('Error adding category: ' + (error.response?.data?.error || error.message))
         }
     }
 

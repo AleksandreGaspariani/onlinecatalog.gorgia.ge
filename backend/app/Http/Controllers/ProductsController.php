@@ -27,6 +27,12 @@ class ProductsController extends Controller
             'image.*' => 'file|image|max:2048',
         ]);
 
+        $categoryId = $request->input('category_id');
+
+        if ($categoryId && Products::where('category_id', $categoryId)->exists()) {
+            return response()->json(['error' => 'category_id must be unique'], 400);
+        }
+
         if ($request->input('category_id')) {
             $exists = Category::where('group_id', $request->input('category_id'))->exists();
             if (!$exists) {

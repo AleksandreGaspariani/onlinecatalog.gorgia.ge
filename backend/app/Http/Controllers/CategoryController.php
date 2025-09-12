@@ -16,6 +16,13 @@ class CategoryController extends Controller
             'image' => 'nullable|file|image|max:2048',
         ]);
 
+        $categoryName = $request->input('name');
+        $groupId = $request->input('group_id');
+
+        if ($groupId && Category::where('name', $categoryName)->where('group_id', $groupId)->exists()) {
+            return response()->json(['error' => 'group_id must be unique'], 400);
+        }
+
         $attachment = null;
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('category', 'public');
@@ -36,12 +43,8 @@ class CategoryController extends Controller
         $user = request()->user();
 
         if ($user && $user->role === 'contragent') {
-            $categoryIds = \App\Models\Products::where('user_id', $user->user_id)
-                ->pluck('category_id')
-                ->unique()
-                ->toArray();
-
-            $categories = Category::whereIn('group_id', $categoryIds)->get();
+            $categoryIds = $user->categories ? (is_array($user->categories) ? $user->categories : json_decode($user->categories, true)) : [];
+            $categories = Category::whereIn('id', $categoryIds)->get();
         } else {
             $categories = Category::all();
         }

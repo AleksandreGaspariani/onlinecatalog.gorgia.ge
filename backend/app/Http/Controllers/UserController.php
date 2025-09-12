@@ -36,6 +36,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
             'role' => 'required|string|in:admin,operator,presailer,contragent',
+            'categories' => 'nullable|array',
         ]);
 
         if (!in_array($request->role, $allowedRoles)) {
@@ -48,6 +49,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'user_id' => $user->id,
+            'categories' => $request->categories ? json_encode($request->categories) : null,
         ]);
 
         return response()->json($newUser, 201);
@@ -70,23 +72,32 @@ class UserController extends Controller
     {
         $currentUser = $request->user();
 
-        if ($currentUser->role !== 'admin') {
+        if (!in_array($currentUser->role, ['admin', 'presailer', 'operator'])) {
             return response()->json(['message' => 'You are not authorized to edit users'], 403);
+        }
+        // presailer can edit only their own users
+        if ($currentUser->role === ('presailer' || 'operator') && $user->user_id !== $currentUser->id) {
+            return response()->json(['message' => 'You are not authorized to edit this user'], 403);
         }
 
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'password' => 'nullable|string|min:6',
-            'role' => 'required|string|in:admin,operator,presailer,contragent',
+            'role' => 'sometimes|string|in:admin,operator,presailer,contragent',
+            'categories' => 'nullable|array',
         ]);
 
-        $user->update([
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password ? Hash::make($request->password) : $user->password,
-            'role' => $request->role,
-        ]);
+            'categories' => $request->categories ? json_encode($request->categories) : null,
+        ];
+        if ($request->has('role')) {
+            $data['role'] = $request->role;
+        }
+        $user->update($data);
 
         return response()->json($user);
     }

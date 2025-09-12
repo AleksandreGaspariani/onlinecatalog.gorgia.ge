@@ -151,3 +151,110 @@
     background: #dbe7f7;
     color: #125ea7;
 }
+
+/* Multiselect dropdown styles */
+.multiselectDropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    color: #222;
+    border: 1px solid #b3c0d1;
+    border-radius: 8px;
+    z-index: 1000;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 4px;
+    box-shadow: 0 8px 24px 0 #488aec22, 0 1.5px 4px 0 #488aec11;
+    animation: dropdownShow 0.18s cubic-bezier(.4, 2, .6, 1) both;
+}
+
+@keyframes dropdownShow {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.multiselectOption {
+    display: flex;
+    align-items: center;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 16px;
+    border-bottom: 1px solid #f2f2f2;
+    transition: background 0.15s, color 0.15s;
+}
+
+.multiselectOption:last-child {
+    border-bottom: none;
+}
+
+.multiselectOption:hover {
+    background: #eaf4fb;
+    color: #017dbe;
+}
+
+/* Custom checkbox styles */
+.customCheckbox {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+    border-radius: 5px;
+    background: #f3f6fa;
+    border: 1.5px solid #b3c0d1;
+    appearance: none;
+    outline: none;
+    cursor: pointer;
+    transition: border 0.18s, box-shadow 0.18s;
+    vertical-align: middle;
+}
+
+.customCheckbox:checked {
+    background: #017dbe;
+    border-color: #017dbe;
+    box-shadow: 0 2px 8px 0 #488aec33;
+}
+
+.customCheckbox:checked:after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2.5px 2.5px 0;
+    border-radius: 1px;
+    transform: rotate(45deg);
+    opacity: 1;
+    transition: opacity 0.18s;
+}
+
+.customCheckbox:after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2.5px 2.5px 0;
+    border-radius: 1px;
+    transform: rotate(45deg);
+    opacity: 0;
+    transition: opacity 0.18s;
+}
+
+/* Selected label style */
+.selectedLabel {
+    color: #017dbe;
+    font-weight: 500;
+}

@@ -9,6 +9,21 @@ import defaultInstance from '../../api/defaultInstance'
 import { useSelector, useDispatch } from 'react-redux'
 import { setUser } from '../../redux/userSlice'
 
+const getRoleLabel = (role) => {
+    switch (role) {
+        case 'admin':
+            return 'ადმინისტრატორი';
+        case 'operator':
+            return 'ოპერატორი';
+        case 'presailer':
+            return 'პრისეილერი';
+        case 'contragent':
+            return 'კონტრაგენტი';
+        default:
+            return role;
+    }
+}
+
 const Users = () => {
     const [open, setOpen] = useState(false)
     const [form, setForm] = useState({
@@ -18,31 +33,18 @@ const Users = () => {
         role: ''
     })
     const [editModalOpen, setEditModalOpen] = useState(false)
+    const [categories, setCategories] = useState([])
     const [editForm, setEditForm] = useState({
         name: '',
         email: '',
-        password: ''
+        password: '',
+        categories: []
     })
     const [data, setData] = useState([])
     const [deleteModalOpen, setDeleteModalOpen] = useState(false)
     const [rowToDelete, setRowToDelete] = useState(null)
     const userRole = useSelector(state => state.user?.role);
     const dispatch = useDispatch();
-
-    const getRoleLabel = (role) => {
-        switch (role) {
-            case 'admin':
-                return 'ადმინისტრატორი';
-            case 'operator':
-                return 'ოპერატორი';
-            case 'presailer':
-                return 'პრისეილერი';
-            case 'contragent':
-                return 'კონტრაგენტი';
-            default:
-                return role;
-        }
-    }
 
     useEffect(() => {
         if (!userRole) {
@@ -77,8 +79,18 @@ const Users = () => {
                     password: '********',
                     role: getRoleLabel(user.role),
                     actions: '',
+                    categories: Array.isArray(user.categories) ? user.categories : (typeof user.categories === 'string' && user.categories ? JSON.parse(user.categories) : [])
                 })));
             });
+
+        defaultInstance.get('/categories', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+                'Accept': 'application/json'
+            }
+        }).then(res => {
+            setCategories(res.data);
+        });
     }, [userRole, dispatch])
 
     const handleChange = e => {
@@ -130,7 +142,7 @@ const Users = () => {
             name: user.name || '',
             email: user.email || '',
             password: '',
-            role: user.role || ''
+            categories: Array.isArray(user.categories) ? user.categories.map(c => (typeof c === 'object' && c.id ? c.id : c)) : []
         })
         setRowToDelete(user);
         setEditModalOpen(true)
@@ -182,7 +194,18 @@ const Users = () => {
     }
 
     const handleEditChange = e => {
-        setEditForm({ ...editForm, [e.target.name]: e.target.value })
+        if (e.target.name === 'categories') {
+            if (Array.isArray(e.target.value)) {
+                setEditForm({ ...editForm, categories: e.target.value });
+            } else if (e.target.selectedOptions) {
+                const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+                setEditForm({ ...editForm, categories: selectedOptions });
+            } else {
+                setEditForm({ ...editForm, categories: [] });
+            }
+        } else {
+            setEditForm({ ...editForm, [e.target.name]: e.target.value })
+        }
     }
 
     const handleEditSubmit = async (e) => {
@@ -290,12 +313,21 @@ const Users = () => {
             onChange: handleEditChange
         },
         {
+            label: 'Categories',
+            type: 'multiselect',
+            name: 'categories',
+            value: editForm.categories,
+            onChange: handleEditChange,
+            options: categories.map(cat => ({ label: cat.name, value: cat.id }))
+        },
+        {
             label: 'Password',
             type: 'password',
             name: 'password',
             value: editForm.password,
             onChange: handleEditChange
-        }
+        },
+
     ]
 
     const columns = [
