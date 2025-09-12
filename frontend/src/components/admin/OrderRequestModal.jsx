@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Modal from './Modal'
 import styles from '../../assets/css/OrderRequestModal.module.css'
-import { toast } from 'react-hot-toast'
+import { toast } from "react-toastify";
 import { OrbitProgress } from "react-loading-indicators";
+import defaultInstance from '../../api/defaultInstance.js'
 
 const OrderRequestModal = ({ open, onClose, row }) => {
     const [date, setDate] = useState('')
@@ -14,6 +15,7 @@ const OrderRequestModal = ({ open, onClose, row }) => {
     const [warehouses, setWarehouses] = useState([])
     const [selectedCard, setSelectedCard] = useState(null)
     const [loading, setLoading] = useState(false)
+    const [profile, setProfile] = useState(null)
 
     useEffect(() => {
         if (open && row?.bmCode) {
@@ -31,6 +33,7 @@ const OrderRequestModal = ({ open, onClose, row }) => {
                         setSelectedCard(null)
                     }
                 })
+                // eslint-disable-next-line no-unused-vars
                 .catch(error => {
                     setWarehouses([])
                     setSelectedCard(null)
@@ -43,12 +46,71 @@ const OrderRequestModal = ({ open, onClose, row }) => {
         }
     }, [open, row])
 
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        if (open) {
+            defaultInstance.get('/profile')
+                .then(res => {
+                    setProfile(res.data)
+                    if (
+                        !res.data ||
+                        !res.data.contact_email ||
+                        !(res.data.phone || res.data.contact_phone)
+                    ) {
+                        toast.error('გთხოვთ შეავსოთ ელ.ფოსტა და ტელეფონი პროფილში')
+                        onClose && onClose()
+                    }
+                })
+                .catch(() => {
+                    toast.error('პროფილის მონაცემების მიღება ვერ მოხერხდა!')
+                    onClose && onClose()
+                })
+        }
+    }, [open, onClose])
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        onClose()
+        if (!selectedCard) {
+            toast.error('აირჩიეთ საწყობი')
+            return
+        }
+        if (
+            !profile ||
+            !profile.contact_email ||
+            !(profile.phone || profile.contact_phone)
+        ) {
+            toast.error('გთხოვთ შეავსოთ ელ.ფოსტა და ტელეფონი პროფილში')
+            return
+        }
+        try {
+            setLoading(true)
+            const total = parseFloat(price) * parseInt(quantity)
+            await defaultInstance.post('http://localhost:8000/api/order-request', {
+                order_status: 'pending',
+                delivery_date: date,
+                email: profile.contact_email,
+                phone: profile.phone || profile.contact_phone,
+                item_id: row.bmCode,
+                quantity: quantity,
+                price: price,
+                total: total,
+                payment_method: deliveryType,
+            })
+            toast.success('შეკვეთა წარმატებით გაიგზავნა!')
+            onClose()
+            // eslint-disable-next-line no-unused-vars
+        } catch (err) {
+            toast.error('შეკვეთის გაგზავნა ვერ მოხერხდა!')
+        } finally {
+            setLoading(false)
+        }
     }
 
-    if (!row) return null;
+    if (
+        !row ||
+        !profile ||
+        !profile.contact_email ||
+        !(profile.phone || profile.contact_phone)
+    ) return null;
 
     return (
         <Modal open={open} onClose={onClose} title="დეტალები">

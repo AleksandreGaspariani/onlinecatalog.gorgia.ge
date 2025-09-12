@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\OrderController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -38,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/products/{product}', [ProductsController::class, 'update']);
     Route::post('/products/{product}/update-with-images', [ProductsController::class, 'updateWithImages']);
     Route::delete('/products/{product}', [ProductsController::class, 'destroy']);
+
+    // Order request route
+    Route::post('/order-request', [OrderController::class, 'store']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });
