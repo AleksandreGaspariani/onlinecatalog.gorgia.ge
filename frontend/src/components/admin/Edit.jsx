@@ -58,6 +58,23 @@ const Edit = ({
     };
 
     const renderInput = (field) => {
+        if (field.type === 'select' && Array.isArray(field.options)) {
+            return (
+                <select
+                    id={field.name}
+                    name={field.name}
+                    value={field.value}
+                    onChange={field.onChange}
+                    className={product.modalFormInput}
+                >
+                    <option value="">აირჩიეთ</option>
+                    {field.options.map(opt => (
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                </select>
+            );
+        }
+
         if (field.type === 'text' && field.autocomplete && field.suggestions) {
             return (
                 <div style={{ position: 'relative' }}>

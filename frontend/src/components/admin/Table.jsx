@@ -36,7 +36,7 @@ const Table = ({ columns, data, onEdit, onDelete }) => {
                         </div>
                     ))}
                 </div>
-                {data.map((row, rowIdx) => (
+                {(Array.isArray(data) ? data : []).map((row, rowIdx) => (
                     <div className={`${styles.adminTableRow} ${styles.tableRow}`} key={rowIdx}>
                         {columns.map((col, colIdx) => (
                             <div className={styles.adminTableCell} key={colIdx}>
